@@ -1,0 +1,19 @@
+version: '3.7'
+
+services:
+  bartosz-lauks-engineering-project-mysql:
+    container_name: bartosz-lauks-engineering-project-mysql-stage
+    ports:
+      - '33062:3306'
+
+  bartosz-lauks-engineering-project-php:
+    container_name: bartosz-lauks-engineering-project-php-stage
+    environment:
+      APP_ENV: prod
+      APP_VERSION: prod
+      DATABASE_URL: mysql://root:@bartosz-lauks-engineering-project-mysql:3306/bartosz-lauks-engineering-project_stage
+
+  bartosz-lauks-engineering-project-nginx:
+    container_name: bartosz-lauks-engineering-project-nginx-stage
+    ports:
+      - '8082:80'

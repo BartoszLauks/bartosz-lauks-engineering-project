@@ -1,0 +1,32 @@
+version: '3.7'
+
+services:
+  bartosz-lauks-engineering-project-mysql:
+    container_name: bartosz-lauks-engineering-project-mysql-dev-local
+    ports:
+      - '33060:3306'
+  bartosz-lauks-engineering-project-php:
+    container_name: bartosz-lauks-engineering-project-php-dev-local
+    ports:
+      - '2222:22'
+    volumes:
+      - bartosz-lauks-engineering-project-api-vendor-sync:/app/vendor
+      - bartosz-lauks-engineering-project-api-app-sync:/app
+    environment:
+      APP_ENV: dev
+      APP_VERSION: dev
+      DATABASE_URL: mysql://root:@bartosz-lauks-engineering-project-mysql:3306/bartosz-lauks-engineering-project
+
+  bartosz-lauks-engineering-project-nginx:
+    container_name: bartosz-lauks-engineering-project-nginx-dev-local
+    ports:
+      - '9090:80'
+    volumes:
+      - bartosz-lauks-engineering-project-api-vendor-sync:/app/vendor
+      - bartosz-lauks-engineering-project-api-app-sync:/app
+
+volumes:
+  bartosz-lauks-engineering-project-api-vendor-sync:
+    external: true
+  bartosz-lauks-engineering-project-api-app-sync:
+    external: true
