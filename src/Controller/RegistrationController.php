@@ -52,7 +52,7 @@ class RegistrationController extends AbstractController
                     ->htmlTemplate('registration/confirmation_email.html.twig')
             );
 
-            return $this->redirectToRoute('home');// TODO : create successful verification page
+            return $this->redirectToRoute('app_home');// TODO : create successful verification page
         }
 
         return $this->render('registration/register.html.twig', [
@@ -91,7 +91,7 @@ class RegistrationController extends AbstractController
         {
             $this->addFlash('info', 'Your account is verified.');
 
-            return $this->redirectToRoute('home');
+            return $this->redirectToRoute('app_home');
         }
 
         $this->emailVerifier->sendEmailConfirmation('app_verify_email', $user,
