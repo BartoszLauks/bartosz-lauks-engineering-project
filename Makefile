@@ -73,3 +73,6 @@ execphp:
 
 execdb:
 	docker-compose exec bartosz-lauks-engineering-project-mysql bash
+
+to_php_docker:
+	docker exec -it bartosz-lauks-engineering-project-php-dev bash

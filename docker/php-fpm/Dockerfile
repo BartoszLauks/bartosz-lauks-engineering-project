@@ -49,3 +49,9 @@ RUN ln -s /usr/share/zoneinfo/$TIMEZONE /etc/localtime && echo $TIMEZONE > /etc/
 RUN "date"
 
 CMD crond -b && rsyslogd && php-fpm
+
+RUN wget https://get.symfony.com/cli/installer -O - | bash
+RUN mv /root/.symfony/bin/symfony /usr/local/bin/symfony
+
+RUN apk add vim
+RUN alias sc="symfony console"

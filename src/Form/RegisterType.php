@@ -1,0 +1,50 @@
+<?php
+
+namespace App\Form;
+
+use App\Entity\Gender;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\PasswordType;
+use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+
+class RegisterType extends AbstractType
+{
+    public function buildForm(FormBuilderInterface $builder, array $options): void
+    {
+        $builder
+            ->add('email')
+            ->add('password', RepeatedType::class, [
+                'type' => PasswordType::class,
+                'required' => true,
+                'first_options' => ['label' => 'Password'],
+                'second_options' => ['label' => 'Confirm Password'],
+            ])
+            ->add('name')
+            ->add('surname')
+            ->add('city')
+            ->add('post_code')
+            ->add('street')
+            ->add('home_nr')
+            ->add('phone')
+            ->add('gender',EntityType::class, [
+                'class' => Gender::class
+            ])
+            ->add('register',SubmitType::class, [
+                'attr' => [
+                    'class' => 'btn btn-success float-right'
+                ]
+            ])
+        ;
+    }
+
+    public function configureOptions(OptionsResolver $resolver): void
+    {
+        $resolver->setDefaults([
+            // Configure your form options here
+        ]);
+    }
+}
