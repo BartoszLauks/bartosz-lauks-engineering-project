@@ -13,7 +13,7 @@ class HomeController extends AbstractController
     {
         return $this->render('home/index.html.twig', [
             'controller_name' => 'HomeController',
-            'datatime' => new \DateTime()
+            'datatime' => new \DateTime() // TODO: to test, remove
         ]);
     }
 }
