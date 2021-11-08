@@ -39,6 +39,14 @@ class TestController extends AbstractController
     #[Route('/test')]
     public function testuser(Security $security, UserRepository $userRepository, Request $request)
     {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        dd($request);
+
+    }
+    #[Route('/test/remember')]
+    public function testuserremeber(Security $security, UserRepository $userRepository, Request $request)
+    {
+        $this->denyAccessUnlessGranted('IS_REMEMBERED');
         dd($request);
 
     }
