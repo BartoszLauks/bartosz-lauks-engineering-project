@@ -5,6 +5,7 @@ namespace App\Security;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Security;
@@ -24,10 +25,12 @@ class AppAuthenticator extends AbstractLoginFormAuthenticator
     public const LOGIN_ROUTE = 'app_login';
 
     private UrlGeneratorInterface $urlGenerator;
+    private FlashBagInterface $flashBag;
 
-    public function __construct(UrlGeneratorInterface $urlGenerator)
+    public function __construct(UrlGeneratorInterface $urlGenerator, FlashBagInterface $flashBag)
     {
         $this->urlGenerator = $urlGenerator;
+        $this->flashBag = $flashBag;
     }
 
     public function authenticate(Request $request): PassportInterface
@@ -51,10 +54,9 @@ class AppAuthenticator extends AbstractLoginFormAuthenticator
         if ($targetPath = $this->getTargetPath($request->getSession(), $firewallName)) {
             return new RedirectResponse($targetPath);
         }
+        $this->flashBag->add('info',"You have been logged in ! :)");
 
-        // For example:
         return new RedirectResponse($this->urlGenerator->generate('app_home'));
-        //throw new \Exception('TODO: provide a valid redirect inside '.__FILE__);
     }
 
     protected function getLoginUrl(Request $request): string
