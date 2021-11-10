@@ -2,12 +2,17 @@
 
 namespace App\Controller;
 
+use App\Entity\TestBrand;
 use App\Form\NewsType;
 use App\Form\SelectCarComponetsType;
 use App\Repository\BrandRepository;
 use App\Repository\ModelRepository;
+use App\Repository\TestBrandRepository;
+use App\Repository\TestGenerationRepository;
+use App\Repository\TestModelRepository;
 use App\Repository\UserRepository;
 use http\Cookie;
+use phpDocumentor\Reflection\Types\Integer;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -26,6 +31,9 @@ class TestController extends AbstractController
     private $formFactory;
     private $brandRepository;
     private $modelRepository;
+    private $testBrandRepository;
+    private $testModelRepository;
+    private $testGenerationRepository;
 
 
     public function __construct
@@ -35,7 +43,10 @@ class TestController extends AbstractController
         UserRepository $userRepository,
         FormFactoryInterface $formFactory,
         BrandRepository $brandRepository,
-        ModelRepository $modelRepository
+        ModelRepository $modelRepository,
+        //TestBrandRepository $testBrandRepository,
+        //TestModelRepository $testModelRepository,
+        //TestGenerationRepository $testGenerationRepository,
     ) {
         $this->mailer = $mailer;
         $this->security = $security;
@@ -43,6 +54,9 @@ class TestController extends AbstractController
         $this->formFactory = $formFactory;
         $this->brandRepository = $brandRepository;
         $this->modelRepository = $modelRepository;
+        //$this->testBrandRepository = $testBrandRepository;
+        //$this->testModelRepository = $testModelRepository;
+        //$this->testGenerationRepository = $testGenerationRepository;
     }
 
     #[Route('/email', name: 'test')]
@@ -98,7 +112,8 @@ class TestController extends AbstractController
     #[Route('/orm')]
     public function ormtest()
     {
-        //dd($this->brandRepository->findOneBy(['id' => 1])->getModels());
-        dd($this->modelRepository->findOneBy(['id' => '1'])->getBrand());
+        //dd($this->testModelRepository->findOneBy(['id' => '1'])->getGeneration());
+        //dd($this->modelRepository->findOneBy(['id' => '1'])->getGenerations());
+
     }
 }
