@@ -19,10 +19,18 @@ class SelectCarComponetsType extends AbstractType
         $builder
             ->add('brand', EntityType::class, [
                 'class' => Brand::class,
-                'placeholder' => '',
+                'placeholder' => 'Select a category',
+                'mapped' => false,
             ])
             //->add('Submit',SubmitType::class)
         ;
+        $builder->get('brand')->addEventListener(
+            FormEvents::POST_SUBMIT,
+            function (FormEvent $event) {
+                $form = $event->getForm();
+                $form->add('');
+            }
+        );
     }
 
     public function configureOptions(OptionsResolver $resolver): void

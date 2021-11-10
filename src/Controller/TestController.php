@@ -4,6 +4,8 @@ namespace App\Controller;
 
 use App\Form\NewsType;
 use App\Form\SelectCarComponetsType;
+use App\Repository\BrandRepository;
+use App\Repository\ModelRepository;
 use App\Repository\UserRepository;
 use http\Cookie;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -22,18 +24,25 @@ class TestController extends AbstractController
     private $security;
     private $userRepository;
     private $formFactory;
+    private $brandRepository;
+    private $modelRepository;
+
 
     public function __construct
     (
         MailerInterface $mailer,
         Security $security,
         UserRepository $userRepository,
-        FormFactoryInterface $formFactory
+        FormFactoryInterface $formFactory,
+        BrandRepository $brandRepository,
+        ModelRepository $modelRepository
     ) {
         $this->mailer = $mailer;
         $this->security = $security;
         $this->userRepository = $userRepository;
         $this->formFactory = $formFactory;
+        $this->brandRepository = $brandRepository;
+        $this->modelRepository = $modelRepository;
     }
 
     #[Route('/email', name: 'test')]
@@ -84,5 +93,12 @@ class TestController extends AbstractController
         }
 
         return $this->render('test/test.html.twig',['form' => $form->createView()]);
+    }
+
+    #[Route('/orm')]
+    public function ormtest()
+    {
+        //dd($this->brandRepository->findOneBy(['id' => 1])->getModels());
+        dd($this->modelRepository->findOneBy(['id' => '1'])->getBrand());
     }
 }
