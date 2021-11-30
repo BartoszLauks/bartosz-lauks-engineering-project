@@ -2,22 +2,18 @@
 
 namespace App\Controller;
 
-use App\Entity\TestBrand;
-use App\Form\NewsType;
 use App\Form\SelectCarComponetsType;
 use App\Repository\BrandRepository;
+use App\Repository\CarBodyRepository;
+use App\Repository\EngineRepository;
 use App\Repository\ModelRepository;
-use App\Repository\TestBrandRepository;
-use App\Repository\TestGenerationRepository;
-use App\Repository\TestModelRepository;
 use App\Repository\UserRepository;
-use http\Cookie;
-use phpDocumentor\Reflection\Types\Integer;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Address;
 use Symfony\Component\Mime\Email;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Security;
@@ -31,9 +27,8 @@ class TestController extends AbstractController
     private $formFactory;
     private $brandRepository;
     private $modelRepository;
-    private $testBrandRepository;
-    private $testModelRepository;
-    private $testGenerationRepository;
+    private $engineRepository;
+    private $carBodyRepository;
 
 
     public function __construct
@@ -44,9 +39,8 @@ class TestController extends AbstractController
         FormFactoryInterface $formFactory,
         BrandRepository $brandRepository,
         ModelRepository $modelRepository,
-        //TestBrandRepository $testBrandRepository,
-        //TestModelRepository $testModelRepository,
-        //TestGenerationRepository $testGenerationRepository,
+        CarBodyRepository $carBodyRepository,
+        EngineRepository $engineRepository,
     ) {
         $this->mailer = $mailer;
         $this->security = $security;
@@ -54,9 +48,8 @@ class TestController extends AbstractController
         $this->formFactory = $formFactory;
         $this->brandRepository = $brandRepository;
         $this->modelRepository = $modelRepository;
-        //$this->testBrandRepository = $testBrandRepository;
-        //$this->testModelRepository = $testModelRepository;
-        //$this->testGenerationRepository = $testGenerationRepository;
+        $this->engineRepository = $engineRepository;
+        $this->carBodyRepository = $carBodyRepository;
     }
 
     #[Route('/email', name: 'test')]
@@ -64,7 +57,7 @@ class TestController extends AbstractController
     {
         $email = (new Email())
             //->from('bartoszlauks@gmail.com')
-            ->from('test@test.pl')
+            ->from(new Address('bartoszlauks@gmail.com', 'EACverify'))
             //->to('cruzonek@gmail.com')
             ->to('bartosz.lauks@interia.pl')
             //->cc('cc@example.com')
@@ -103,7 +96,8 @@ class TestController extends AbstractController
 
         if ($form->isSubmitted())
         {
-            $this->render('test/index.html.twig');
+            return $this->render('test/index.html.twig');
+            //return $this->render('test/test.html.twig',['form' => $form->createView()]);
         }
 
         return $this->render('test/test.html.twig',['form' => $form->createView()]);
@@ -112,8 +106,10 @@ class TestController extends AbstractController
     #[Route('/orm')]
     public function ormtest()
     {
-        //dd($this->testModelRepository->findOneBy(['id' => '1'])->getGeneration());
-        //dd($this->modelRepository->findOneBy(['id' => '1'])->getGenerations());
-
+        dd($this->engineRepository->findByCarBody(5));
+        //dd();
+        //$val = $this->carBodyRepository->findOneBy(['id' => 4]);
+        //dd($val);
+        //dd($this->engineRepository->findBy(['body' => $val]));
     }
 }

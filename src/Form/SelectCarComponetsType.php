@@ -16,21 +16,35 @@ class SelectCarComponetsType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        /*
         $builder
             ->add('brand', EntityType::class, [
                 'class' => Brand::class,
                 'placeholder' => 'Select a category',
-                'mapped' => false,
             ])
-            //->add('Submit',SubmitType::class)
         ;
-        $builder->get('brand')->addEventListener(
+        $builder->get('brand')
+            ->addEventListener(
             FormEvents::POST_SUBMIT,
             function (FormEvent $event) {
+                dd($event);
+
                 $form = $event->getForm();
-                $form->add('');
+
+                $form->getParent()->add('models', EntityType::class, [
+                    'class' => Model::class,
+                    'placeholder' => 'Select a model',
+                    'choices' => $form->getData()->getModels()
+                ]);
             }
         );
+        */
+        $builder
+            ->add('brand', EntityType::class, [
+                'class' => Brand::class,
+                'placeholder' => 'Select a Brand',
+                'attr' => ['onchange' => 'this.form.submit()'],
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

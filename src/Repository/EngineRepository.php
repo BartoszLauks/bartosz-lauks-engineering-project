@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Engine;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -19,6 +20,25 @@ class EngineRepository extends ServiceEntityRepository
         parent::__construct($registry, Engine::class);
     }
 
+
+    public function findByCarBody($body = 4): QueryBuilder
+    {
+        return $this->createQueryBuilder('e')
+            ->join('e.body','c','c.id = e.id')
+            ->where('c.id = :val')
+            ->setParameter('val',$body)
+        ;
+    }
+
+    public function testQB()
+    {
+        return $this->createQueryBuilder('e')
+            ->join()
+            ->getQuery()
+            ->getResult()
+            ;
+
+    }
     // /**
     //  * @return Engine[] Returns an array of Engine objects
     //  */

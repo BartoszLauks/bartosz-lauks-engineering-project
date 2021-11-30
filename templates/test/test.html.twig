@@ -4,5 +4,6 @@
 
 {% block body %}
     {{ dump() }}
-    {{ form(form) }}
+    {# {{ form(form) }} #}
+    {{ form_widget(form.language, { 'attr': {'class': 'select2'} }) }}
 {% endblock %}
