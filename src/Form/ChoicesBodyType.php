@@ -11,19 +11,6 @@ class ChoicesBodyType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-//        $builder
-//            ->add('body', EntityType::class, [
-//                'class' => CarBody::class,
-//                'placeholder' => '',
-//                'attr' => ['onchange' => 'this.form.submit()'],
-//                'query_builder' => function (CarBodyRepository $er) use ($options) {
-//                    return $er->getCarBodyWithGenerationBrandModelRelation(
-//                        $options['brand'], $options['model'], $options['generation']);
-//                    //return $er->createQueryBuilder('m')
-//                    //    ->andWhere('m.generation = :val')
-//                    //    ->setParameter('val', $options['generation']);
-//                },
-//            ]);
         $name = array_map(function ($object) { return $object->getName(); }, $options['body']);
         $builder
             ->add('body', ChoiceType::class, [
@@ -36,7 +23,6 @@ class ChoicesBodyType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            // Configure your form options here
             'body'=> 1
         ]);
         $resolver->setAllowedTypes('body','array');

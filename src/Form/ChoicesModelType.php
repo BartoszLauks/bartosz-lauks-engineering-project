@@ -11,15 +11,6 @@ class ChoicesModelType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-//        $builder
-//            ->add('model', EntityType::class, [
-//                'class' => Model::class,
-//                'placeholder' => '',
-//                'attr' => ['onchange' => 'this.form.submit()'],
-//                'query_builder' => function (ModelRepository $er) use ($options) {
-//                    return $er->getModelWithBrandRelation($options['brand']);
-//                },
-//            ]);
 
         $name = array_map(function ($object) { return $object->getName(); }, $options['model']);
         $builder

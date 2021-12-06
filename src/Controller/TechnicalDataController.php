@@ -172,7 +172,10 @@ class TechnicalDataController extends AbstractController
     public function allComponents(Request $request,Brand $brand,Model $model,Generation $generation,CarBody $body, Engine $engine)
     {
         $components = $this->engineRepository->checkCarExist($brand,$model,$generation,$body,$engine);
-        dd($components);
+        if (empty($components))
+        {
+            throw new NotFoundHttpException();
+        }
         return $this->redirect($this->generateUrl('app_home'));
     }
 }

@@ -17,16 +17,13 @@ class ChoicesBrandType extends AbstractType
                 'class' => Brand::class,
                 'placeholder' => '',
                 'attr' => ['onchange' => 'this.form.submit()'],
-                //'attr' => ['id' => 'choices_brand'],
             ])
-            //->add('next', SubmitType::class)
         ;
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            // Configure your form options here
         ]);
     }
 }
