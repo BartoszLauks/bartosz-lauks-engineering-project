@@ -2,18 +2,22 @@
 
 namespace App\Form;
 
-use App\Entity\Brand;
-use App\Entity\Model;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use App\Repository\EngineRepository;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class SelectCarComponetsType extends AbstractType
 {
+    private $engineRepository;
+
+    public function __construct(
+        EngineRepository $engineRepository
+    ) {
+        $this->engineRepository = $engineRepository;
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         /*
@@ -39,11 +43,14 @@ class SelectCarComponetsType extends AbstractType
             }
         );
         */
+        $en = $this->engineRepository->findAll();
+
+        $en = array_map(function ($o) { return $o->getName();}, $en);
+        //dd(array_flip($en));
         $builder
-            ->add('brand', EntityType::class, [
-                'class' => Brand::class,
-                'placeholder' => 'Select a Brand',
-                'attr' => ['onchange' => 'this.form.submit()'],
+            ->add('brand',ChoiceType::class,[
+                'choices' => array_flip($en),
+
             ]);
     }
 

@@ -106,7 +106,7 @@ class TestController extends AbstractController
     #[Route('/orm')]
     public function ormtest()
     {
-        dd($this->engineRepository->findByCarBody(5));
+        //dd($this->engineRepository->findByCarBody(5));
         //dd();
         //$val = $this->carBodyRepository->findOneBy(['id' => 4]);
         //dd($val);

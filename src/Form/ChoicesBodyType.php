@@ -2,10 +2,8 @@
 
 namespace App\Form;
 
-use App\Entity\CarBody;
-use App\Repository\CarBodyRepository;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -13,16 +11,25 @@ class ChoicesBodyType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+//        $builder
+//            ->add('body', EntityType::class, [
+//                'class' => CarBody::class,
+//                'placeholder' => '',
+//                'attr' => ['onchange' => 'this.form.submit()'],
+//                'query_builder' => function (CarBodyRepository $er) use ($options) {
+//                    return $er->getCarBodyWithGenerationBrandModelRelation(
+//                        $options['brand'], $options['model'], $options['generation']);
+//                    //return $er->createQueryBuilder('m')
+//                    //    ->andWhere('m.generation = :val')
+//                    //    ->setParameter('val', $options['generation']);
+//                },
+//            ]);
+        $name = array_map(function ($object) { return $object->getName(); }, $options['body']);
         $builder
-            ->add('body', EntityType::class, [
-                'class' => CarBody::class,
+            ->add('body', ChoiceType::class, [
+                'choices' => array_combine($name, $name),
                 'placeholder' => '',
                 'attr' => ['onchange' => 'this.form.submit()'],
-                'query_builder' => function (CarBodyRepository $er) use ($options) {
-                    return $er->createQueryBuilder('m')
-                        ->andWhere('m.generation = :val')
-                        ->setParameter('val', $options['generation']);
-                },
             ]);
     }
 
@@ -30,8 +37,8 @@ class ChoicesBodyType extends AbstractType
     {
         $resolver->setDefaults([
             // Configure your form options here
-            'generation' => 1
+            'body'=> 1
         ]);
-        $resolver->setAllowedTypes('generation','int');
+        $resolver->setAllowedTypes('body','array');
     }
 }

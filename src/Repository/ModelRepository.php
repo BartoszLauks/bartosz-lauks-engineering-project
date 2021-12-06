@@ -2,8 +2,10 @@
 
 namespace App\Repository;
 
+use App\Entity\Brand;
 use App\Entity\Model;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -17,6 +19,17 @@ class ModelRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Model::class);
+    }
+
+    public function getModelWithBrandRelation(Brand $brand)
+    {
+        return $this->createQueryBuilder('m')
+            ->join('m.brand','b','m.id = b.model')
+            ->where('b = :brand')
+            ->setParameter('brand',$brand)
+            ->getQuery()
+            ->getResult()
+            ;
     }
 
     // /**

@@ -2,12 +2,8 @@
 
 namespace App\Form;
 
-use App\Entity\Brand;
-use App\Entity\Model;
-use App\Repository\BrandRepository;
-use App\Repository\ModelRepository;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -15,16 +11,22 @@ class ChoicesModelType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+//        $builder
+//            ->add('model', EntityType::class, [
+//                'class' => Model::class,
+//                'placeholder' => '',
+//                'attr' => ['onchange' => 'this.form.submit()'],
+//                'query_builder' => function (ModelRepository $er) use ($options) {
+//                    return $er->getModelWithBrandRelation($options['brand']);
+//                },
+//            ]);
+
+        $name = array_map(function ($object) { return $object->getName(); }, $options['model']);
         $builder
-            ->add('model', EntityType::class, [
-                'class' => Model::class,
+            ->add('model',ChoiceType::class,[
+                'choices' => array_combine($name,$name),
                 'placeholder' => '',
                 'attr' => ['onchange' => 'this.form.submit()'],
-                'query_builder' => function (ModelRepository $er) use ($options) {
-                    return $er->createQueryBuilder('m')
-                        ->andWhere('m.brand = :val')
-                        ->setParameter('val', $options['brand']);
-                },
             ]);
     }
 
@@ -32,8 +34,8 @@ class ChoicesModelType extends AbstractType
     {
         $resolver->setDefaults([
             // Configure your form options here
-            'brand' => 1
+            'model' => 1
         ]);
-        $resolver->setAllowedTypes('brand','int');
+        $resolver->setAllowedTypes('model','array');
     }
 }

@@ -2,9 +2,12 @@
 
 namespace App\Repository;
 
+use App\Entity\Brand;
+use App\Entity\CarBody;
 use App\Entity\Engine;
+use App\Entity\Generation;
+use App\Entity\Model;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -20,25 +23,50 @@ class EngineRepository extends ServiceEntityRepository
         parent::__construct($registry, Engine::class);
     }
 
-
-    public function findByCarBody($body = 4): QueryBuilder
+    public function getEngineWithCarBodyGenerationBrandModelRelation(Brand $brand, Model $model, Generation $generation,CarBody $body)
     {
         return $this->createQueryBuilder('e')
-            ->join('e.body','c','c.id = e.id')
-            ->where('c.id = :val')
-            ->setParameter('val',$body)
-        ;
-    }
-
-    public function testQB()
-    {
-        return $this->createQueryBuilder('e')
-            ->join()
+            ->join('e.body','cb','e.id = cb.engines')
+            ->join('cb.generation','g','cb.id = g.carBodies')
+            ->join('g.model','m','g.id = m.generation')
+            ->join('m.brand','b','m.brand = b.id')
+            ->where('b = :brand')
+            ->andWhere('m = :model')
+            ->andWhere('g = :generation')
+            ->andWhere('cb = :body')
+            ->setParameter('brand',$brand)
+            ->setParameter('model',$model)
+            ->setParameter('generation',$generation)
+            ->setParameter('body',$body)
             ->getQuery()
             ->getResult()
             ;
-
     }
+
+    public function checkCarExist(Brand $brand, Model $model, Generation $generation,CarBody $body,Engine $engine)
+    {
+        return $this->createQueryBuilder('e')
+            //->select('e, cb, g, m, b')
+            ->join('e.body','cb','e.id = cb.engines')
+            ->join('cb.generation','g','cb.id = g.carBodies')
+            ->join('g.model','m','g.id = m.generation')
+            ->join('m.brand','b','m.brand = b.id')
+            ->where('b = :brand')
+            ->andWhere('m = :model')
+            ->andWhere('g = :generation')
+            ->andWhere('cb = :body')
+            ->andWhere('e = :engine')
+            ->setParameter('brand',$brand)
+            ->setParameter('model',$model)
+            ->setParameter('generation',$generation)
+            ->setParameter('body',$body)
+            ->setParameter('engine',$engine)
+            ->getQuery()
+            ->getResult()
+            ;
+    }
+
+
     // /**
     //  * @return Engine[] Returns an array of Engine objects
     //  */
