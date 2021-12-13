@@ -20,7 +20,9 @@ use App\Repository\ModelRepository;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -53,7 +55,7 @@ class TechnicalDataController extends AbstractController
     }
 
     #[Route('/', name: 'technical_data_brand')]
-    public function choosingBrand(Request $request)
+    public function choosingBrand(Request $request): RedirectResponse|Response
     {
 
         $form = $this->formFactory->create(ChoicesBrandType::class);
@@ -68,7 +70,7 @@ class TechnicalDataController extends AbstractController
     }
     #[Route('/{brand}/', name: 'technical_data_model')]
     #[ParamConverter('brand', options: ['mapping' => ['brand' => 'name']])]
-    public function choosingModel(Request $request,Brand $brand)
+    public function choosingModel(Request $request,Brand $brand): RedirectResponse|Response
     {
         $model = $this->modelRepository->getModelWithBrandRelation($brand);
         if (empty($model)) {
@@ -90,7 +92,7 @@ class TechnicalDataController extends AbstractController
     #[Route('/{brand}/{model}/', name: 'technical_data_generation')]
     #[ParamConverter('brand', options: ['mapping' => ['brand' => 'name']])]
     #[ParamConverter('model', options: ['mapping' => ['model' => 'name']])]
-    public function choosingGeneration(Request $request,Brand $brand,Model $model)
+    public function choosingGeneration(Request $request,Brand $brand,Model $model): RedirectResponse|Response
     {
         $generation = $this->generationRepository->getGenerationWithBrandModelRelation($brand,$model);
         if (empty($generation)) {
@@ -115,7 +117,7 @@ class TechnicalDataController extends AbstractController
     #[ParamConverter('brand', options: ['mapping' => ['brand' => 'name']])]
     #[ParamConverter('model', options: ['mapping' => ['model' => 'name']])]
     #[ParamConverter('generation', options: ['mapping' => ['generation' => 'name']])]
-    public function choosingBody(Request $request, Brand $brand, Model $model, Generation $generation)
+    public function choosingBody(Request $request, Brand $brand, Model $model, Generation $generation): RedirectResponse|Response
     {
         $body = $this->carBodyRepository->getCarBodyWithGenerationModelBrandRelation($brand,$model,$generation);
         if (empty($body)) {
@@ -141,7 +143,7 @@ class TechnicalDataController extends AbstractController
     #[ParamConverter('model', options: ['mapping' => ['model' => 'name']])]
     #[ParamConverter('generation', options: ['mapping' => ['generation' => 'name']])]
     #[ParamConverter('body', options: ['mapping' => ['body' => 'name']])]
-    public function choosingEngine(Request $request,Brand $brand,Model $model,Generation $generation,CarBody $body)
+    public function choosingEngine(Request $request,Brand $brand,Model $model,Generation $generation,CarBody $body): RedirectResponse|Response
     {
         //dd($this->carBodyRepository->findOneBy(['name' => $request->get('body')])->getId());
         $engine = $this->engineRepository->getEngineWithCarBodyGenerationBrandModelRelation($brand,$model,$generation,$body);
