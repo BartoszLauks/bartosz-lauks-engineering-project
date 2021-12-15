@@ -4,8 +4,6 @@
         <meta charset="UTF-8">
         <title>{% block title %}Welcome!{% endblock %}</title>
         <link rel="icon" type="image/png" href="https://cdn-icons.flaticon.com/png/512/2330/premium/2330453.png?token=exp=1636966926~hmac=5d87aae16bddcd2b3f0399a362e64bc3">
-        {# Run `composer require symfony/webpack-encore-bundle`
-           and uncomment the following Encore helpers to start using Symfony UX #}
         {% block stylesheets %}
             <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
             <style>
@@ -71,6 +69,14 @@
                 .navbar-light .navbar-nav .nav-link {
                     color: white;
                 }
+                #advertising
+                {
+                    left: 0;
+                    right: 0;
+                    background-color: #d5d5d5;
+                    height: 210px;
+                    text-align: center;
+                }
             </style>
         {% endblock %}
         {% block javascripts %}
@@ -126,7 +132,10 @@
         <div id="under_header">
 
         </div>
-
+        <div id="advertising">
+            {# <img src="{{ asset('/default.png') }}" alt=""> #}
+            {{ render(controller('App\\Controller\\AdvertisingController::index')) }}
+        </div>
         <div id="body">
             {% for label, messages in app.flashes %}
                 {% for message in messages %}
@@ -138,6 +147,7 @@
             {% block body %}
 
             {% endblock %}
+
         </div>
         <div id="footer">
             <footer class="bg-primary text-white text-center text-lg-start">

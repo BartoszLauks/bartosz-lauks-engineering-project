@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Form\SelectCarComponetsType;
+use App\Repository\AdvertisingRepository;
 use App\Repository\BrandRepository;
 use App\Repository\CarBodyRepository;
 use App\Repository\EngineRepository;
@@ -29,6 +30,7 @@ class TestController extends AbstractController
     private $modelRepository;
     private $engineRepository;
     private $carBodyRepository;
+    private $advertisingRepository;
 
 
     public function __construct
@@ -41,6 +43,7 @@ class TestController extends AbstractController
         ModelRepository $modelRepository,
         CarBodyRepository $carBodyRepository,
         EngineRepository $engineRepository,
+        AdvertisingRepository $advertisingRepository
     ) {
         $this->mailer = $mailer;
         $this->security = $security;
@@ -50,6 +53,7 @@ class TestController extends AbstractController
         $this->modelRepository = $modelRepository;
         $this->engineRepository = $engineRepository;
         $this->carBodyRepository = $carBodyRepository;
+        $this->advertisingRepository = $advertisingRepository;
     }
 
     #[Route('/email', name: 'test')]
@@ -107,7 +111,7 @@ class TestController extends AbstractController
     public function ormtest()
     {
         //dd($this->engineRepository->findByCarBody(5));
-        dd();
+        dd($this->advertisingRepository->getActiveAdvertising(new \DateTime()));
         //$val = $this->carBodyRepository->findOneBy(['id' => 4]);
         //dd($val);
         //dd($this->engineRepository->findBy(['body' => $val]));
