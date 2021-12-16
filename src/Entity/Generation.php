@@ -35,7 +35,7 @@ class Generation
     private $carBodies;
 
     /**
-     * @ORM\ManyToOne(targetEntity=model::class, inversedBy="generations")
+     * @ORM\ManyToOne(targetEntity=Model::class, inversedBy="generations")
      */
     private $model;
 

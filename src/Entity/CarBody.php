@@ -39,9 +39,15 @@ class CarBody
      */
     private $generation;
 
+    /**
+     * @ORM\OneToMany(targetEntity=CarBodyValue::class, mappedBy="carBody")
+     */
+    private $value;
+
     public function __construct()
     {
         $this->engines = new ArrayCollection();
+        $this->value = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -116,4 +122,35 @@ class CarBody
     {
         return $this->getName();
     }
+
+    /**
+     * @return Collection|CarBodyValue[]
+     */
+    public function getValue(): Collection
+    {
+        return $this->value;
+    }
+
+    public function addValue(CarBodyValue $value): self
+    {
+        if (!$this->value->contains($value)) {
+            $this->value[] = $value;
+            $value->setCarBody($this);
+        }
+
+        return $this;
+    }
+
+    public function removeValue(CarBodyValue $value): self
+    {
+        if ($this->value->removeElement($value)) {
+            // set the owning side to null (unless already changed)
+            if ($value->getCarBody() === $this) {
+                $value->setCarBody(null);
+            }
+        }
+
+        return $this;
+    }
+
 }

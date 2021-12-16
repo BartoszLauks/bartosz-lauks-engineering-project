@@ -34,9 +34,15 @@ class Engine
      */
     private $body;
 
+    /**
+     * @ORM\OneToMany(targetEntity=EngineValue::class, mappedBy="engine")
+     */
+    private $value;
+
     public function __construct()
     {
         $this->body = new ArrayCollection();
+        $this->value = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -95,5 +101,35 @@ class Engine
     public function __toString(): string
     {
         return $this->getName();
+    }
+
+    /**
+     * @return Collection|EngineValue[]
+     */
+    public function getValue(): Collection
+    {
+        return $this->value;
+    }
+
+    public function addValue(EngineValue $value): self
+    {
+        if (!$this->value->contains($value)) {
+            $this->value[] = $value;
+            $value->setEngine($this);
+        }
+
+        return $this;
+    }
+
+    public function removeValue(EngineValue $value): self
+    {
+        if ($this->value->removeElement($value)) {
+            // set the owning side to null (unless already changed)
+            if ($value->getEngine() === $this) {
+                $value->setEngine(null);
+            }
+        }
+
+        return $this;
     }
 }
