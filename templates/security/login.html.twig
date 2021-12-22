@@ -8,13 +8,21 @@
         <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
     {% endif %}
 
+    {% if error != null %}
+        {% if error.code == 403 %}
+            <div class="alert alert-info">If you didn't get verification email. <a href="{{ path('app_verify_email_refresh') }}">
+                    Refresh verification email
+                </a> </div>
+        {% endif %}
+    {% endif %}
+
     {% if app.user %}
         <div class="alert alert-info">
             You are logged in as {{ app.user.username }}, <a href="{{ path('app_logout') }}">Logout</a>
         </div>
     {% endif %}
 
-    <div id="login-register-container">
+    <div id="mid-container">
         <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
         <label for="inputEmail">Email</label>
         <input type="email" value="{{ last_username }}" name="email" id="inputEmail" class="form-control" autocomplete="email" required autofocus>

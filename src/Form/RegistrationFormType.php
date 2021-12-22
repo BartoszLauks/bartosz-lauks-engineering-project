@@ -56,11 +56,7 @@ class RegistrationFormType extends AbstractType
                     ]),
                 ],
             ])
-            ->add('register',SubmitType::class, [
-                //'attr' => [
-                //    'class' => 'btn btn-success float-right'
-                //]
-            ])
+            ->add('register',SubmitType::class)
         ;
     }
 

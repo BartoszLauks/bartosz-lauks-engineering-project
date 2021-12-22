@@ -3,8 +3,11 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Form\RefreshEmailVerifycationType;
 use App\Form\RegistrationFormType;
+use App\Repository\UserRepository;
 use App\Security\EmailVerifier;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -17,14 +20,18 @@ use SymfonyCasts\Bundle\VerifyEmail\Exception\VerifyEmailExceptionInterface;
 class RegistrationController extends AbstractController
 {
     private EmailVerifier $emailVerifier;
+    private UserRepository $userRepository;
 
-    public function __construct(EmailVerifier $emailVerifier)
-    {
+    public function __construct(
+        EmailVerifier $emailVerifier,
+        UserRepository $userRepository
+    ) {
         $this->emailVerifier = $emailVerifier;
+        $this->userRepository = $userRepository;
     }
 
     #[Route('/register', name: 'app_register')]
-    public function register(Request $request, UserPasswordHasherInterface $userPasswordHasherInterface): Response
+    public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager): Response
     {
         $user = new User();
         $form = $this->createForm(RegistrationFormType::class, $user);
@@ -33,43 +40,56 @@ class RegistrationController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             // encode the plain password
             $user->setPassword(
-            $userPasswordHasherInterface->hashPassword(
+            $userPasswordHasher->hashPassword(
                     $user,
                     $form->get('plainPassword')->getData()
                 )
             );
 
-            $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($user);
             $entityManager->flush();
 
             // generate a signed url and email it to the user
             $this->emailVerifier->sendEmailConfirmation('app_verify_email', $user,
                 (new TemplatedEmail())
-                    ->from(new Address('bartoszlauks@gmail.com', 'EACverify'))
+                    ->from(new Address('bartoszlauks@gmail.com', 'EverythingAboutCars'))
                     ->to($user->getEmail())
                     ->subject('Please Confirm your Email')
                     ->htmlTemplate('registration/confirmation_email.html.twig')
             );
 
-            return $this->redirectToRoute('app_home');// TODO : create successful verification page
+            $this->addFlash('info','Verification email was sent');
+
+            return $this->redirectToRoute('app_home');
         }
 
         return $this->render('registration/register.html.twig', [
             'registrationForm' => $form->createView(),
-            ]);
+        ]);
     }
 
     #[Route('/verify/email', name: 'app_verify_email')]
-    public function verifyUserEmail(Request $request): Response
+    public function verifyUserEmail(Request $request, UserRepository $userRepository): Response
     {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        $id = $request->get('id');
+
+        if (null === $id) {
+            return $this->redirectToRoute('app_register');
+        }
+
+        $user = $userRepository->find($id);
+
+        if (null === $user) {
+            return $this->redirectToRoute('app_register');
+        }
 
         // validate email confirmation link, sets User::isVerified=true and persists
         try {
-            $this->emailVerifier->handleEmailConfirmation($request, $this->getUser());
+            $this->emailVerifier->handleEmailConfirmation($request, $user);
         } catch (VerifyEmailExceptionInterface $exception) {
             $this->addFlash('verify_email_error', $exception->getReason());
+
+            $this->addFlash('danger','Something went wrong');
 
             return $this->redirectToRoute('app_register');
         }
@@ -80,27 +100,37 @@ class RegistrationController extends AbstractController
     }
 
     #[Route('/verify/email/refresh', name: 'app_verify_email_refresh')]
-    public function refreshVerifyUserEmail(): Response
+    public function refreshVerifyUserEmail(Request $request): Response
     {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        $form = $this->createForm(RefreshEmailVerifycationType::class);
 
-        $user = $this->getUser();
+        $form->handleRequest($request);
 
-        if ($user->isVerified())
-        {
-            $this->addFlash('info', 'Your account is verified.');
+        if ($form->isSubmitted()) {
 
-            return $this->redirectToRoute('app_home');
+            $user = $this->userRepository->findOneBy(['email' => $form->getData()['email']]);
+
+            if ($user->isVerified()) {
+                $this->addFlash('info', 'Your account is verified.');
+
+                return $this->redirectToRoute('app_home');
+            }
+
+            $this->emailVerifier->sendEmailConfirmation('app_verify_email', $user,
+                (new TemplatedEmail())
+                    ->from(new Address('bartoszlauks@gmail.com', 'EACverify'))
+                    ->to($user->getEmail())
+                    ->subject('Please Confirm your Email')
+                    ->htmlTemplate('registration/confirmation_email.html.twig')
+            );
+
+            $this->addFlash('info', 'Verification email was sent');
+
+            return $this->render('registration/refresh_email_was_sent.html.twig');
         }
 
-        $this->emailVerifier->sendEmailConfirmation('app_verify_email', $user,
-            (new TemplatedEmail())
-                ->from(new Address('bartoszlauks@gmail.com', 'EACverify'))
-                ->to($user->getEmail())
-                ->subject('Please Confirm your Email')
-                ->htmlTemplate('registration/confirmation_email.html.twig')
-        );
-
-        return $this->render('registration/refresh_email_was_sent.html.twig');
+        return $this->render('registration/refresh_email.html.twig', [
+            'form' => $form->createView()
+        ]);
     }
 }
