@@ -21,6 +21,11 @@ class Advertising
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Assert\Regex(
+     *     pattern="/^.*\.(jpg|jpeg|png|gif)$/i",
+     *     match=true,
+     *     message="You cannot add a file other than a photo"
+     * )
      * @Assert\NotBlank()
      */
     private $file;
