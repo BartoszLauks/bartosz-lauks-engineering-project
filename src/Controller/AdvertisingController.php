@@ -20,7 +20,8 @@ class AdvertisingController extends AbstractController
     public function index(): Response
     {
         return $this->render("/advertising/Ads.html.twig",[
-            'path' => $this->advertisingService->getAdvertisingPath()
+            'path' => $this->advertisingService->getAdvertisingPath(),
+            'url' => $this->advertisingService->getAdvertisingUrl()
         ]);
     }
 }

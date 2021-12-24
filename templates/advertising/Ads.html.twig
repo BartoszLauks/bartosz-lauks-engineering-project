@@ -2,7 +2,9 @@
     {% if path == "default.png" %}
         <img src="{{ asset(path) }}" alt="" style="max-height: 200px;max-width: 1000px; padding: 5px">
     {% else %}
-        <img src="{{ asset("/uploads/" ~ path) }}" style="max-height: 200px;max-width: 1000px; padding: 5px"  alt="">
+        <a href="{{ url }}" target="_blank">
+            <img src="{{ asset("/uploads/advertising/" ~ path) }}" style="max-height: 200px;max-width: 1000px; padding: 5px"  alt="">
+        </a>
     {% endif %}
 
 {% endblock %}

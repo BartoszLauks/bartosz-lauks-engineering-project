@@ -16,7 +16,7 @@ class AdvertisingService
 
     public function getAdvertisingPath(): string
     {
-        $ads = $this->advertisingRepository->getActiveAdvertising(new \DateTime());
+        $ads = $this->advertisingRepository->getActiveAdvertising();
         if (empty($ads))
         {
             return 'default.png';
@@ -24,4 +24,15 @@ class AdvertisingService
         $random = rand(0,count($ads)-1);
         return $ads[$random]->getFile();
     }
+    public function getAdvertisingUrl()
+    {
+        $ads = $this->advertisingRepository->getActiveAdvertising();
+        if (empty($ads))
+        {
+            return '';
+        }
+        $random = rand(0,count($ads)-1);
+        return $ads[$random]->getUrl();
+    }
+
 }

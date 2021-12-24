@@ -11,6 +11,7 @@ use App\Entity\EngineValue;
 use App\Entity\Gender;
 use App\Entity\Generation;
 use App\Entity\Model;
+use App\Entity\Newses;
 use App\Entity\User;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
@@ -21,7 +22,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class DashboardController extends AbstractDashboardController
 {
     /**
-     * @Route("/admin", name="admin")
+     * @Route("/admin", name="app_admin")
      */
     public function index(): Response
     {
@@ -39,6 +40,7 @@ class DashboardController extends AbstractDashboardController
         //yield MenuItem::linkToDashboard('Dashboard', 'fa fa-home');
         yield MenuItem::linkToRoute('WebSite', 'fas fa-globe', 'app_home');
         yield MenuItem::linkToCrud('Advertising', 'fas fa-money-check-alt', Advertising::class);
+        yield MenuItem::linkToCrud('Newses', 'fas fa-money-check-alt', Newses::class);
         yield MenuItem::section('Users');
         yield MenuItem::linkToCrud('Gender', 'fas fa-venus-mars', Gender::class);
         yield MenuItem::linkToCrud('User', 'fas fa-users', User::class);

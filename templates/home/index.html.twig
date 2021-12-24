@@ -8,37 +8,21 @@
             <h1>NEWS</h1>
         </div>
         <div class="card-deck">
-            <div class="card">
-                <img class="card-img-top" src="/uploads/98ef194061abbe0aabc2fc3bf5ed2928ce747102.jpg" alt="Card image cap">
-                <div class="card-body">
-                    <h5 class="card-title">Card title</h5>
-                    <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+            {% for news in newses %}
+                <div class="card" style="position: static;">
+                    <a href="{{ news.url }}" target="_blank">
+                        <img class="card-img-top" src="/uploads/newses/{{ news.file }}" alt="Card image cap"  style="height: 350px" >
+                    </a>
+                    <div class="card-body">
+                        <h5 class="card-title">{{ news.title }}</h5>
+                        <p class="card-text">{{ news.context }}</p>
+                    </div>
+                    <div class="card-footer">
+                        <small class="text-muted">Added at {{ news.createdAt|date("m/d/Y") }}</small>
+                    </div>
+
                 </div>
-                <div class="card-footer">
-                    <small class="text-muted">Last updated 3 mins ago</small>
-                </div>
-            </div>
-            <div class="card">
-                <img class="card-img-top" src="/uploads/98ef194061abbe0aabc2fc3bf5ed2928ce747102.jpg" alt="Card image cap">
-                <div class="card-body">
-                    <h5 class="card-title">Card title</h5>
-                    <p class="card-text">This card has supporting text below as a natural lead-in to additional content.</p>
-                </div>
-                <div class="card-footer">
-                    <small class="text-muted">Last updated 3 mins ago</small>
-                </div>
-            </div>
-            <div class="card">
-                <img class="card-img-top" src="/uploads/98ef194061abbe0aabc2fc3bf5ed2928ce747102.jpg" alt="Card image cap">
-                <div class="card-body">
-                    <h5 class="card-title">Card title</h5>
-                    <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This card has even longer content than the first to show that equal height action.</p>
-                </div>
-                <div class="card-footer">
-                    <small class="text-muted">Last updated 3 mins ago</small>
-                </div>
-            </div>
-        </div>
+            {% endfor %}
     </div>
 
 {% endblock %}

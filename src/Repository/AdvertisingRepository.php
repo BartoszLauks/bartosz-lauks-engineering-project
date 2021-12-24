@@ -20,8 +20,10 @@ class AdvertisingRepository extends ServiceEntityRepository
         parent::__construct($registry, Advertising::class);
     }
 
-    public function getActiveAdvertising(\DateTime $date)
+    public function getActiveAdvertising()
     {
+        $date = new \DateTime();
+
         return $this->createQueryBuilder('a')
             ->where('a.dueDate > :date')
             ->andWhere('a.file LIKE :jpg OR a.file LIKE :png OR a.file LIKE :PNG OR a.file LIKE :JPG OR a.file LIKE :gif OR a.file LIKE :GIF')
