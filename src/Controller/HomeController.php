@@ -20,7 +20,6 @@ class HomeController extends AbstractController
     #[Route('/home', name: 'app_home')]
     public function index(): Response
     {
-        //dd($this->newsesRepository->getNewses());
         return $this->render('home/index.html.twig', [
             'newses' => $this->newsesRepository->getNewses()
         ]);
