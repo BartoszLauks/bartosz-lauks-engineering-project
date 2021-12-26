@@ -1,0 +1,55 @@
+{% extends 'Header.html.twig' %}
+
+{% block title %}Car seles offers{% endblock %}
+
+{% block body %}
+    {{ dump() }}
+        <a href="{{ path('car_seles_offers_brand') }}">| Select |</a>
+        {% if brand|default %}
+            <a href="{{ path('car_seles_offers_model', { brand : brand}) }}">| {{ brand }} |</a>
+            {% if model|default %}
+                <a href="{{ path('car_seles_offers_generation', { brand : brand, model : model}) }}">| {{ model }} |</a>
+                {% if generation|default %}
+                    <a href="{{ path('car_seles_offers_body', { brand : brand, model : model, generation : generation}) }}">| {{ generation }} |</a>
+                    {% if body|default %}
+                        <a href="{{ path('car_seles_offers_engine', { brand : brand, model : model, generation : generation, body : body}) }}">| {{ body }} |</a>
+                        {% if engine|default %}
+                            <a href="{{ path('car_seles_offers_all', { brand : brand, model : model, generation : generation, body : body, engine : engine}) }}">| {{ engine }} |</a>
+                        {% endif %}
+                    {% endif %}
+                {% endif %}
+            {% endif %}
+        {% endif %}
+    {% if new|default %}
+        <div id="mid-container">
+            <h4>Add new offer</h4>
+            <a href="{{ path('car_seles_offers_new',{brand : brand, model : model,
+                generation : generation, body : body, engine : engine }) }}">
+                <button class="btn btn-lg btn-primary">New</button>
+            </a>
+        </div>
+    {% endif %}
+    {% if form|default %}
+        {{ form(form) }}
+    {% endif %}
+    {% if offers|default %}
+        {% if offers|length == 0 %}
+            <h4>For select components, don't have offers</h4>
+        {% else %}
+            {% for offer in offers %}
+                <a href="{{ path('car_seles_offers_show', { brand : offer.brand, model : offer.model, generation : offer.generation,
+                    body : offer.carBody, engine : offer.engine, offer : offer.id}) }}">
+                    <div class="card">
+                        <img class="card-img-top" src="/uploads/offers/{{ offer.file }}" alt="Card image cap" style="max-width: 300px;max-height: 300px">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ offer.brand.name }}</h5>
+                            <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+                            <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+                        </div>
+                    </div>
+                </a>
+            {% endfor %}
+        {% endif %}
+    {% endif %}
+
+{% endblock %}

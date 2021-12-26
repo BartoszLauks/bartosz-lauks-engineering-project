@@ -1,0 +1,75 @@
+{% extends 'Header.html.twig' %}
+
+{% block title %}Show car seles offer{% endblock %}
+
+{% block body %}
+    <div>
+        <ul class="component-bar-ul">
+            <li class="component-bar-li">
+                <a class="nav-link" href="{{ path('car_seles_offers_brand') }}">Back to Select</a>
+            </li>
+            <li class="component-bar-li">
+                <a class="nav-link" href="{{ path('car_seles_offers_model',{brand : brand}) }}">{{ brand }}</a>
+            </li>
+            <li class="component-bar-li">
+                <a class="nav-link" href="{{ path('car_seles_offers_generation',{brand : brand,
+                    model : model }) }}">{{ model }}</a>
+            </li>
+            <li class="component-bar-li">
+                <a class="nav-link" href="{{ path('car_seles_offers_body',{brand : brand,
+                    model : model,
+                    generation : generation }) }}">{{ generation }}</a>
+            </li>
+            <li class="component-bar-li">
+                <a class="nav-link" href="{{ path('car_seles_offers_engine',{brand : brand,
+                    model : model,
+                    generation : generation,
+                    body : body }) }}">{{ body }}</a>
+            </li>
+            <li class="component-bar-li">
+                <a class="nav-link" href="{{ path('car_seles_offers_all',{brand : brand,
+                    model : model,
+                    generation : generation,
+                    body : body,
+                    engine : engine }) }}">{{ engine }}</a>
+            </li>
+        </ul>
+    </div>
+    <div class="show-car">
+        <img class="card-img-top" src="/uploads/offers/{{ offer.file }}" alt="Card image cap" style="max-width: 300px;max-height: 300px">
+    </div>
+        <div class="show-car-info">
+            <h3>{{ body }} {{ model }} {{ generation }} {{ body }} {{ engine }}</h3>
+        </div>
+        <div class="show-car-context">
+            <table class="table table-striped">
+                <tbody>
+                <tr>
+                    <td>
+                        Name :
+                    </td>
+                    <td>
+                        {{ body }} {{ model }} {{ generation }} {{ body }} {{ engine }}
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Price :
+                    </td>
+                    <td>
+                        {{ offer.price }}
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Mileage :
+                    </td>
+                    <td>
+                        {{ offer.mileage }}
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+{% endblock %}

@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\NewsesRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=NewsesRepository::class)
@@ -20,16 +21,24 @@ class Newses
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank()
      */
     private $title;
 
     /**
      * @ORM\Column(type="text", nullable=true)
+     * @Assert\NotBlank()
      */
     private $context;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank()
+     * @Assert\Regex(
+     *     pattern="/^.*\.(jpg|jpeg|png|gif)$/i",
+     *     match=true,
+     *     message="You cannot add a file other than a photo"
+     * )
      */
     private $file;
 
@@ -40,6 +49,7 @@ class Newses
 
     /**
      * @ORM\Column(type="text", nullable=true)
+     * @Assert\NotBlank()
      */
     private $url;
 

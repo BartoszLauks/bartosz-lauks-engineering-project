@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -89,6 +91,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\Column(type="boolean")
      */
     private $isVerified = false;
+
+    /**
+     * @ORM\OneToMany(targetEntity=SalesOffers::class, mappedBy="user")
+     */
+    private $salesOffers;
+
+    public function __construct()
+    {
+        $this->salesOffers = new ArrayCollection();
+    }
 
     /**
      * @ORM\PrePersist()
@@ -310,5 +322,35 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getIsVerified(): ?bool
     {
         return $this->isVerified;
+    }
+
+    /**
+     * @return Collection|SalesOffers[]
+     */
+    public function getSalesOffers(): Collection
+    {
+        return $this->salesOffers;
+    }
+
+    public function addSalesOffer(SalesOffers $salesOffer): self
+    {
+        if (!$this->salesOffers->contains($salesOffer)) {
+            $this->salesOffers[] = $salesOffer;
+            $salesOffer->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSalesOffer(SalesOffers $salesOffer): self
+    {
+        if ($this->salesOffers->removeElement($salesOffer)) {
+            // set the owning side to null (unless already changed)
+            if ($salesOffer->getUser() === $this) {
+                $salesOffer->setUser(null);
+            }
+        }
+
+        return $this;
     }
 }

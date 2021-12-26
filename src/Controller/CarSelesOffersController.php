@@ -1,0 +1,322 @@
+<?php
+
+namespace App\Controller;
+
+use App\Entity\Brand;
+use App\Entity\CarBody;
+use App\Entity\Engine;
+use App\Entity\Generation;
+use App\Entity\Model;
+use App\Entity\SalesOffers;
+use App\Form\ChoicesBodyType;
+use App\Form\ChoicesBrandType;
+use App\Form\ChoicesEngineType;
+use App\Form\ChoicesGenerationType;
+use App\Form\ChoicesModelType;
+use App\Form\NewOfferType;
+use App\Repository\BrandRepository;
+use App\Repository\CarBodyRepository;
+use App\Repository\EngineRepository;
+use App\Repository\GenerationRepository;
+use App\Repository\ModelRepository;
+use App\Repository\SalesOffersRepository;
+use App\Repository\UserRepository;
+use Doctrine\ORM\EntityManagerInterface;
+use phpDocumentor\Reflection\Types\This;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Security;
+
+#[Route('/seles-offers')]
+#[IsGranted('IS_AUTHENTICATED_REMEMBERED')]
+class CarSelesOffersController extends AbstractController
+{
+    private $formFactory;
+    private $brandRepository;
+    private $modelRepository;
+    private $generationRepository;
+    private $carBodyRepository;
+    private $engineRepository;
+    private $parameterBag;
+    private $security;
+    private $userRepository;
+    private $entityManager;
+    private $offersRepository;
+
+
+    public function __construct(
+        FormFactoryInterface $formFactory,
+        BrandRepository $brandRepository,
+        ModelRepository $modelRepository,
+        GenerationRepository $generationRepository,
+        CarBodyRepository $carBodyRepository,
+        EngineRepository $engineRepository,
+        ParameterBagInterface $parameterBag,
+        Security $security,
+        UserRepository $userRepository,
+        EntityManagerInterface $entityManager,
+        SalesOffersRepository $offersRepository
+    ) {
+        $this->formFactory = $formFactory;
+        $this->brandRepository = $brandRepository;
+        $this->modelRepository = $modelRepository;
+        $this->generationRepository = $generationRepository;
+        $this->carBodyRepository = $carBodyRepository;
+        $this->engineRepository = $engineRepository;
+        $this->parameterBag = $parameterBag;
+        $this->security = $security;
+        $this->userRepository = $userRepository;
+        $this->entityManager = $entityManager;
+        $this->offersRepository = $offersRepository;
+    }
+
+    #[Route('/', name: 'car_seles_offers_brand')]
+    public function choosingBrand(Request $request): Response
+    {
+        $form = $this->formFactory->create(ChoicesBrandType::class);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted())
+        {
+            $brand = $form->getData()['brand'];
+            return $this->redirect($request->getUri().$brand->getName());
+        }
+        return $this->render('/car_seles_offers/index.html.twig',['form' => $form->createView()]);
+    }
+
+    #[Route('/{brand}/', name: 'car_seles_offers_model')]
+    #[ParamConverter('brand', options: ['mapping' => ['brand' => 'name']])]
+    public function choosingModel(Request $request,Brand $brand): RedirectResponse|Response
+    {
+        $model = $this->modelRepository->getModelWithBrandRelation($brand);
+        if (empty($model)) {
+            throw new NotFoundHttpException();
+        }
+        $offers = $this->offersRepository->getOffersByBrand($brand);
+
+        $form = $this->formFactory->create(ChoicesModelType::class,[],[
+            'model' => $model
+        ]);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted())
+        {
+            $model = $form->getData()['model'];
+
+            return $this->redirect($request->getUri().$model);
+        }
+        return $this->render('/car_seles_offers/index.html.twig',[
+            'brand' => $brand->getName(),
+            'form' => $form->createView(),
+            'offers' => $offers
+        ]);
+    }
+
+    #[Route('/{brand}/{model}/', name: 'car_seles_offers_generation')]
+    #[ParamConverter('brand', options: ['mapping' => ['brand' => 'name']])]
+    #[ParamConverter('model', options: ['mapping' => ['model' => 'name']])]
+    public function choosingGeneration(Request $request,Brand $brand,Model $model): RedirectResponse|Response
+    {
+        $generation = $this->generationRepository->getGenerationWithBrandModelRelation($brand,$model);
+        if (empty($generation)) {
+            throw new NotFoundHttpException();
+        }
+        $offers = $this->offersRepository->getOffersByModel($brand,$model);
+
+        $form = $this->formFactory->create(ChoicesGenerationType::class,[],[
+            'generation' => $generation
+        ]);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted())
+        {
+            $generation = $form->getData()['generation'];
+            return $this->redirect($request->getUri().$generation);
+        }
+        return $this->render('/car_seles_offers/index.html.twig',[
+            'brand' => $brand->getName(),
+            'model' => $model->getName(),
+            'form' => $form->createView(),
+            'offers' => $offers
+        ]);
+    }
+
+    #[Route('/{brand}/{model}/{generation}/', name: 'car_seles_offers_body')]
+    #[ParamConverter('brand', options: ['mapping' => ['brand' => 'name']])]
+    #[ParamConverter('model', options: ['mapping' => ['model' => 'name']])]
+    #[ParamConverter('generation', options: ['mapping' => ['generation' => 'name']])]
+    public function choosingBody(Request $request, Brand $brand, Model $model, Generation $generation): RedirectResponse|Response
+    {
+        $body = $this->carBodyRepository->getCarBodyWithGenerationModelBrandRelation($brand,$model,$generation);
+        if (empty($body)) {
+            throw new NotFoundHttpException();
+        }
+        $offers = $this->offersRepository->getOffersByGeneration($brand,$model,$generation);
+
+        $form = $this->formFactory->create(ChoicesBodyType::class,[],[
+            'body' => $body,
+        ]);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted())
+        {
+            $body = $form->getData()['body'];
+            return $this->redirect($request->getUri().$body);
+        }
+        return $this->render('/car_seles_offers/index.html.twig',[
+            'brand' => $brand->getName(),
+            'model' => $model->getName(),
+            'generation' => $generation->getName(),
+            'form' => $form->createView(),
+            'offers' => $offers
+        ]);
+    }
+
+    #[Route('/{brand}/{model}/{generation}/{body}/', name: 'car_seles_offers_engine')]
+    #[ParamConverter('brand', options: ['mapping' => ['brand' => 'name']])]
+    #[ParamConverter('model', options: ['mapping' => ['model' => 'name']])]
+    #[ParamConverter('generation', options: ['mapping' => ['generation' => 'name']])]
+    #[ParamConverter('body', options: ['mapping' => ['body' => 'name']])]
+    public function choosingEngine(Request $request,Brand $brand,Model $model,Generation $generation,CarBody $body): RedirectResponse|Response
+    {
+        $engine = $this->engineRepository->getEngineWithCarBodyGenerationBrandModelRelation($brand,$model,$generation,$body);
+        if (empty($engine)) {
+            throw new NotFoundHttpException();
+        }
+        $offers = $this->offersRepository->getOffersByCarBody($brand,$model,$generation,$body);
+
+        $form = $this->formFactory->create(ChoicesEngineType::class,[],[
+            'engine' => $engine
+        ]);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted())
+        {
+            $engine = $form->getData()['engine'];
+            return $this->redirect($request->getUri().$engine);
+        }
+        return $this->render('/car_seles_offers/index.html.twig',[
+            'brand' => $brand->getName(),
+            'model' => $model->getName(),
+            'generation' => $generation->getName(),
+            'body' => $body->getName(),
+            'form' => $form->createView(),
+            'offers' => $offers
+        ]);
+    }
+
+    #[Route('/{brand}/{model}/{generation}/{body}/{engine}/', name: 'car_seles_offers_all')]
+    #[ParamConverter('brand', options: ['mapping' => ['brand' => 'name']])]
+    #[ParamConverter('model', options: ['mapping' => ['model' => 'name']])]
+    #[ParamConverter('generation', options: ['mapping' => ['generation' => 'name']])]
+    #[ParamConverter('body', options: ['mapping' => ['body' => 'name']])]
+    #[ParamConverter('engine', options: ['mapping' => ['engine' => 'name']])]
+    public function allComponents(Request $request,Brand $brand,Model $model,Generation $generation,CarBody $body, Engine $engine)
+    {
+        $components = $this->engineRepository->checkCarExist($brand,$model,$generation,$body,$engine);
+        if (empty($components))
+        {
+            throw new NotFoundHttpException();
+        }
+        $offers = $this->offersRepository->getOffersByEngine($brand,$model,$generation,$body,$engine);
+
+        return $this->render('/car_seles_offers/index.html.twig',[
+            'brand' => $brand->getName(),
+            'model' => $model->getName(),
+            'generation' => $generation->getName(),
+            'body' => $body->getName(),
+            'engine' => $engine->getName(),
+            'offers' => $offers,
+            'new' => true
+        ]);
+    }
+
+    #[Route('/{brand}/{model}/{generation}/{body}/{engine}/new', name: 'car_seles_offers_new')]
+    #[ParamConverter('brand', options: ['mapping' => ['brand' => 'name']])]
+    #[ParamConverter('model', options: ['mapping' => ['model' => 'name']])]
+    #[ParamConverter('generation', options: ['mapping' => ['generation' => 'name']])]
+    #[ParamConverter('body', options: ['mapping' => ['body' => 'name']])]
+    #[ParamConverter('engine', options: ['mapping' => ['engine' => 'name']])]
+    public function new(Request $request,Brand $brand,Model $model,Generation $generation,CarBody $body, Engine $engine)
+    {
+        $components = $this->engineRepository->checkCarExist($brand,$model,$generation,$body,$engine);
+        if (empty($components))
+        {
+            throw new NotFoundHttpException();
+        }
+
+        $offer = new SalesOffers();
+        $form = $this->formFactory->create(NewOfferType::class,$offer);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid())
+        {
+
+            $offer = $form->getData();
+            $file = ($request->files->get('new_offer')['file']);
+
+            if ($file)
+            {
+                $filename = md5(uniqid()).".". $file->guessClientExtension();
+                $file->move($this->parameterBag->get('uploads_dir_offer'),$filename);
+            }
+
+            $offer->setBrand($brand);
+            $offer->setModel($model);
+            $offer->setGeneration($generation);
+            $offer->setCarBody($body);
+            $offer->setEngine($engine);
+            $offer->setFile($filename);
+            $offer->setUser($this->userRepository->find($this->security->getUser()));
+
+            $this->entityManager->persist($offer);
+            $this->entityManager->flush();
+
+            $this->addFlash('success',"Your offer was added");
+
+            return $this->redirectToRoute('car_seles_offers_all',[
+                'brand' => $brand,
+                'model' => $model,
+                'generation' => $generation,
+                'body' => $body,
+                'engine' => $engine
+            ]);
+        }
+
+        return $this->render('/car_seles_offers/new.html.twig',[
+            'form' => $form->createView()
+        ]);
+    }
+
+    #[Route('/{brand}/{model}/{generation}/{body}/{engine}/show/{offer}', name: 'car_seles_offers_show')]
+    #[ParamConverter('brand', options: ['mapping' => ['brand' => 'name']])]
+    #[ParamConverter('model', options: ['mapping' => ['model' => 'name']])]
+    #[ParamConverter('generation', options: ['mapping' => ['generation' => 'name']])]
+    #[ParamConverter('body', options: ['mapping' => ['body' => 'name']])]
+    #[ParamConverter('engine', options: ['mapping' => ['engine' => 'name']])]
+    #[ParamConverter('offer')]
+    public function show(Request $request,Brand $brand,Model $model,Generation $generation,CarBody $body, Engine $engine, SalesOffers $offer)
+    {
+        return $this->render('/car_seles_offers/show.html.twig',[
+            'brand' => $brand,
+            'model' => $model,
+            'generation' => $generation,
+            'body' => $body,
+            'engine' => $engine,
+            'offer' => $offer
+        ]);
+    }
+    public function remove()
+    {
+
+    }
+}

@@ -44,10 +44,16 @@ class CarBody
      */
     private $value;
 
+    /**
+     * @ORM\OneToMany(targetEntity=SalesOffers::class, mappedBy="carBody")
+     */
+    private $salesOffers;
+
     public function __construct()
     {
         $this->engines = new ArrayCollection();
         $this->value = new ArrayCollection();
+        $this->salesOffers = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -147,6 +153,36 @@ class CarBody
             // set the owning side to null (unless already changed)
             if ($value->getCarBody() === $this) {
                 $value->setCarBody(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|SalesOffers[]
+     */
+    public function getSalesOffers(): Collection
+    {
+        return $this->salesOffers;
+    }
+
+    public function addSalesOffer(SalesOffers $salesOffer): self
+    {
+        if (!$this->salesOffers->contains($salesOffer)) {
+            $this->salesOffers[] = $salesOffer;
+            $salesOffer->setCarBody($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSalesOffer(SalesOffers $salesOffer): self
+    {
+        if ($this->salesOffers->removeElement($salesOffer)) {
+            // set the owning side to null (unless already changed)
+            if ($salesOffer->getCarBody() === $this) {
+                $salesOffer->setCarBody(null);
             }
         }
 

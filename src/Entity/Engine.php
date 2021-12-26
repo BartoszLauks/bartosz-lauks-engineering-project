@@ -39,10 +39,16 @@ class Engine
      */
     private $value;
 
+    /**
+     * @ORM\OneToMany(targetEntity=SalesOffers::class, mappedBy="engine")
+     */
+    private $salesOffers;
+
     public function __construct()
     {
         $this->body = new ArrayCollection();
         $this->value = new ArrayCollection();
+        $this->salesOffers = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -127,6 +133,36 @@ class Engine
             // set the owning side to null (unless already changed)
             if ($value->getEngine() === $this) {
                 $value->setEngine(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|SalesOffers[]
+     */
+    public function getSalesOffers(): Collection
+    {
+        return $this->salesOffers;
+    }
+
+    public function addSalesOffer(SalesOffers $salesOffer): self
+    {
+        if (!$this->salesOffers->contains($salesOffer)) {
+            $this->salesOffers[] = $salesOffer;
+            $salesOffer->setEngine($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSalesOffer(SalesOffers $salesOffer): self
+    {
+        if ($this->salesOffers->removeElement($salesOffer)) {
+            // set the owning side to null (unless already changed)
+            if ($salesOffer->getEngine() === $this) {
+                $salesOffer->setEngine(null);
             }
         }
 

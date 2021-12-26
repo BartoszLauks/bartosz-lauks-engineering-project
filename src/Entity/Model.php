@@ -39,9 +39,15 @@ class Model
      */
     private $brand;
 
+    /**
+     * @ORM\OneToMany(targetEntity=SalesOffers::class, mappedBy="model")
+     */
+    private $salesOffers;
+
     public function __construct()
     {
         $this->generations = new ArrayCollection();
+        $this->salesOffers = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -118,5 +124,35 @@ class Model
     public function __toString(): string
     {
         return $this->getName();
+    }
+
+    /**
+     * @return Collection|SalesOffers[]
+     */
+    public function getSalesOffers(): Collection
+    {
+        return $this->salesOffers;
+    }
+
+    public function addSalesOffer(SalesOffers $salesOffer): self
+    {
+        if (!$this->salesOffers->contains($salesOffer)) {
+            $this->salesOffers[] = $salesOffer;
+            $salesOffer->setModel($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSalesOffer(SalesOffers $salesOffer): self
+    {
+        if ($this->salesOffers->removeElement($salesOffer)) {
+            // set the owning side to null (unless already changed)
+            if ($salesOffer->getModel() === $this) {
+                $salesOffer->setModel(null);
+            }
+        }
+
+        return $this;
     }
 }

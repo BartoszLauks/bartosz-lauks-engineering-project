@@ -7,8 +7,10 @@
 /public/bundles/
 /public/uploads/advertising/*
 /public/uploads/newses/*
+/public/uploads/offers/*
 !public/uploads/advertising/default.png
 !public/uploads/newses/default.png
+!public/uploads/offers/default.png
 /var/
 /vendor/
 ###< symfony/framework-bundle ###
@@ -19,6 +21,6 @@
 ###< symfony/phpunit-bridge ###
 
 ###> phpunit/phpunit ###
-/phpunit.xml
-.phpunit.result.cache
+#/phpunit.xml
+#.phpunit.result.cache
 ###< phpunit/phpunit ###
