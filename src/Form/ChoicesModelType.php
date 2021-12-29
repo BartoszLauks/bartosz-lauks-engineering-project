@@ -15,6 +15,7 @@ class ChoicesModelType extends AbstractType
         $name = array_map(function ($object) { return $object->getName(); }, $options['model']);
         $builder
             ->add('model',ChoiceType::class,[
+                'label' => "Select model : ",
                 'choices' => array_combine($name,$name),
                 'placeholder' => '',
                 'attr' => ['onchange' => 'this.form.submit()'],

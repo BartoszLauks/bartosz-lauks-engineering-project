@@ -17,6 +17,7 @@ use App\Repository\CarBodyRepository;
 use App\Repository\EngineRepository;
 use App\Repository\GenerationRepository;
 use App\Repository\ModelRepository;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormFactoryInterface;
@@ -27,6 +28,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 #[Route('/technical-data')]
+#[IsGranted('IS_AUTHENTICATED_REMEMBERED')]
 class TechnicalDataController extends AbstractController
 {
     private $formFactory;
@@ -68,6 +70,7 @@ class TechnicalDataController extends AbstractController
         }
         return $this->render('/technical_data/index.html.twig',['form' => $form->createView()]);
     }
+
     #[Route('/{brand}/', name: 'technical_data_model')]
     #[ParamConverter('brand', options: ['mapping' => ['brand' => 'name']])]
     public function choosingModel(Request $request,Brand $brand): RedirectResponse|Response
@@ -87,8 +90,12 @@ class TechnicalDataController extends AbstractController
 
             return $this->redirect($request->getUri().$model);
         }
-        return $this->render('/technical_data/index.html.twig',['form' => $form->createView()]);
+        return $this->render('/technical_data/index.html.twig',[
+            'form' => $form->createView(),
+            'brand' => $brand->getName()
+        ]);
     }
+
     #[Route('/{brand}/{model}/', name: 'technical_data_generation')]
     #[ParamConverter('brand', options: ['mapping' => ['brand' => 'name']])]
     #[ParamConverter('model', options: ['mapping' => ['model' => 'name']])]
@@ -99,20 +106,22 @@ class TechnicalDataController extends AbstractController
             throw new NotFoundHttpException();
         }
         $form = $this->formFactory->create(ChoicesGenerationType::class,[],[
-            //'model' => $this->modelRepository->findOneBy(['name' => $request->get('model')])->getId()
             'generation' => $generation
         ]);
 
         $form->handleRequest($request);
         if ($form->isSubmitted())
         {
-            //$generation = $this->generationRepository->findOneBy(['id' => $request->request->get('choices_generation')['generation']]);
-            //dd($this->carBodyRepository->getCarBodyWithGenerationBrandModelRelation($brand,$model,$form->getData()['generation'])->getQuery()->getResult());
             $generation = $form->getData()['generation'];
             return $this->redirect($request->getUri().$generation);
         }
-        return $this->render('/technical_data/index.html.twig',['form' => $form->createView()]);
+        return $this->render('/technical_data/index.html.twig',[
+            'form' => $form->createView(),
+            'brand' => $brand->getName(),
+            'model' => $model->getName()
+        ]);
     }
+
     #[Route('/{brand}/{model}/{generation}/', name: 'technical_data_body')]
     #[ParamConverter('brand', options: ['mapping' => ['brand' => 'name']])]
     #[ParamConverter('model', options: ['mapping' => ['model' => 'name']])]
@@ -124,20 +133,23 @@ class TechnicalDataController extends AbstractController
             throw new NotFoundHttpException();
         }
         $form = $this->formFactory->create(ChoicesBodyType::class,[],[
-            //'generation' => $this->generationRepository->findOneBy(['name' => $request->get('generation')])->getId()
             'body' => $body,
         ]);
 
         $form->handleRequest($request);
         if ($form->isSubmitted())
         {
-            //dd($form->getData());
-            //$body = $this->carBodyRepository->findOneBy(['id' => $request->request->get('choices_body')['body']]);
             $body = $form->getData()['body'];
             return $this->redirect($request->getUri().$body);
         }
-        return $this->render('/technical_data/index.html.twig',['form' => $form->createView()]);
+        return $this->render('/technical_data/index.html.twig',[
+            'form' => $form->createView(),
+            'brand' => $brand->getName(),
+            'model' => $model->getName(),
+            'generation' => $generation->getName()
+        ]);
     }
+
     #[Route('/{brand}/{model}/{generation}/{body}/', name: 'technical_data_engine')]
     #[ParamConverter('brand', options: ['mapping' => ['brand' => 'name']])]
     #[ParamConverter('model', options: ['mapping' => ['model' => 'name']])]
@@ -145,26 +157,29 @@ class TechnicalDataController extends AbstractController
     #[ParamConverter('body', options: ['mapping' => ['body' => 'name']])]
     public function choosingEngine(Request $request,Brand $brand,Model $model,Generation $generation,CarBody $body): RedirectResponse|Response
     {
-        //dd($this->carBodyRepository->findOneBy(['name' => $request->get('body')])->getId());
         $engine = $this->engineRepository->getEngineWithCarBodyGenerationBrandModelRelation($brand,$model,$generation,$body);
-        //dd($engine);
         if (empty($engine)) {
             throw new NotFoundHttpException();
         }
         $form = $this->formFactory->create(ChoicesEngineType::class,[],[
             'engine' => $engine
-            //'body' => $this->carBodyRepository->findOneBy(['name' => $request->get('body')])->getId()
         ]);
 
         $form->handleRequest($request);
         if ($form->isSubmitted())
         {
             $engine = $form->getData()['engine'];
-            //$engine = $this->engineRepository->findOneBy(['id' => $request->request->get('choices_engine')['engine']]);
             return $this->redirect($request->getUri().$engine);
         }
-        return $this->render('/technical_data/index.html.twig',['form' => $form->createView()]);
+        return $this->render('/technical_data/index.html.twig',[
+            'form' => $form->createView(),
+            'brand' => $brand->getName(),
+            'model' => $model->getName(),
+            'generation' => $generation->getName(),
+            'body' => $body->getName()
+        ]);
     }
+
     #[Route('/{brand}/{model}/{generation}/{body}/{engine}/', name: 'technical_data_all')]
     #[ParamConverter('brand', options: ['mapping' => ['brand' => 'name']])]
     #[ParamConverter('model', options: ['mapping' => ['model' => 'name']])]

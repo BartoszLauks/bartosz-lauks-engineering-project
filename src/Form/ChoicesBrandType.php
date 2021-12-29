@@ -14,6 +14,7 @@ class ChoicesBrandType extends AbstractType
     {
         $builder
             ->add('brand', EntityType::class, [
+                'label' => "Select brand : ",
                 'class' => Brand::class,
                 'placeholder' => '',
                 'attr' => ['onchange' => 'this.form.submit()'],

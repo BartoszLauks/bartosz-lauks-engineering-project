@@ -1,0 +1,55 @@
+{% extends 'Header.html.twig' %}
+
+{% block title %}Blog{% endblock %}
+
+{% block body %}
+    {{ dump() }}
+    <a href="{{ path('blog_brand') }}">| Select |</a>
+    {% if brand|default %}
+        <a href="{{ path('blog_model', { brand : brand}) }}">| {{ brand }} |</a>
+        {% if model|default %}
+            <a href="{{ path('blog_generation', { brand : brand, model : model}) }}">| {{ model }} |</a>
+            {% if generation|default %}
+                <a href="{{ path('blog_body', { brand : brand, model : model, generation : generation}) }}">| {{ generation }} |</a>
+                {% if body|default %}
+                    <a href="{{ path('blog_engine', { brand : brand, model : model, generation : generation, body : body}) }}">| {{ body }} |</a>
+                    {% if engine|default %}
+                        <a href="{{ path('blog_all', { brand : brand, model : model, generation : generation, body : body, engine : engine}) }}">| {{ engine }} |</a>
+                    {% endif %}
+                {% endif %}
+            {% endif %}
+        {% endif %}
+    {% endif %}
+    {% if new|default %}
+        <div id="mid-container">
+            <h4>Add new post</h4>
+            <a href="{{ path('blog_new_post',{brand : brand, model : model,
+                generation : generation, body : body, engine : engine }) }}">
+                <button class="btn btn-lg btn-primary">New</button>
+            </a>
+        </div>
+    {% endif %}
+    {% if form|default %}
+        {{ form(form) }}
+    {% endif %}
+    <br>
+    {% if posts|default %}
+        {% if posts|length == 0 %}
+            <h4>For select components, don't have posts</h4>
+        {% else %}
+            {% for post in posts %}
+                <a href="{{ path('blog_selected_post', { brand : post.brand, model : post.model, generation : post.generation,
+                    body : post.carBody, engine : post.engine, post : post.id}) }}">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ post.title }}</h5>
+                            <p class="card-text">{{ post.content }}</p>
+                            <p class="card-text"><small class="text-muted">Added at : {{ post.createdAt|date("F jS \\a\\t g:ia") }}.
+                                    By : {{ post.user.name }} {{ post.user.surname }}</small></p>
+                        </div>
+                    </div>
+                </a>
+            {% endfor %}
+        {% endif %}
+    {% endif %}
+{% endblock %}

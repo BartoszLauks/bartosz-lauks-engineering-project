@@ -14,6 +14,7 @@ class ChoicesBodyType extends AbstractType
         $name = array_map(function ($object) { return $object->getName(); }, $options['body']);
         $builder
             ->add('body', ChoiceType::class, [
+                'label' => "Select body car : ",
                 'choices' => array_combine($name, $name),
                 'placeholder' => '',
                 'attr' => ['onchange' => 'this.form.submit()'],

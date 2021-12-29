@@ -15,6 +15,7 @@ class ChoicesGenerationType extends AbstractType
         $name = array_map(function ($object) { return $object->getName();}, $options['generation']);
         $builder
             ->add('generation',ChoiceType::class,[
+                'label' => "Select generation : ",
                 'choices' => array_combine($name,$name),
                 'placeholder' => '',
                 'attr' => ['onchange' => 'this.form.submit()'],

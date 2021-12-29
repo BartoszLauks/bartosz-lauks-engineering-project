@@ -14,6 +14,7 @@ class ChoicesEngineType extends AbstractType
         $name = array_map(function ($object) { return $object->getName(); }, $options['engine']);
         $builder
             ->add('engine',ChoiceType::class,[
+                'label' => "Select engine : ",
                 'choices' => array_combine($name,$name),
                 'placeholder' => '',
                 'attr' => ['onchange' => 'this.form.submit()'],

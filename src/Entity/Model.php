@@ -44,10 +44,16 @@ class Model
      */
     private $salesOffers;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Post::class, mappedBy="model")
+     */
+    private $posts;
+
     public function __construct()
     {
         $this->generations = new ArrayCollection();
         $this->salesOffers = new ArrayCollection();
+        $this->posts = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -150,6 +156,36 @@ class Model
             // set the owning side to null (unless already changed)
             if ($salesOffer->getModel() === $this) {
                 $salesOffer->setModel(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Post[]
+     */
+    public function getPosts(): Collection
+    {
+        return $this->posts;
+    }
+
+    public function addPost(Post $post): self
+    {
+        if (!$this->posts->contains($post)) {
+            $this->posts[] = $post;
+            $post->setModel($this);
+        }
+
+        return $this;
+    }
+
+    public function removePost(Post $post): self
+    {
+        if ($this->posts->removeElement($post)) {
+            // set the owning side to null (unless already changed)
+            if ($post->getModel() === $this) {
+                $post->setModel(null);
             }
         }
 

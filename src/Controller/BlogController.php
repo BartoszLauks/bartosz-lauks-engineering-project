@@ -4,30 +4,33 @@ namespace App\Controller;
 
 use App\Entity\Brand;
 use App\Entity\CarBody;
+use App\Entity\Comment;
 use App\Entity\Engine;
 use App\Entity\Generation;
 use App\Entity\Model;
-use App\Entity\SalesOffers;
+use App\Entity\Post;
 use App\Form\ChoicesBodyType;
 use App\Form\ChoicesBrandType;
 use App\Form\ChoicesEngineType;
 use App\Form\ChoicesGenerationType;
 use App\Form\ChoicesModelType;
-use App\Form\NewOfferType;
+use App\Form\PostType;
 use App\Repository\BrandRepository;
 use App\Repository\CarBodyRepository;
+use App\Repository\CommentRepository;
 use App\Repository\EngineRepository;
 use App\Repository\GenerationRepository;
 use App\Repository\ModelRepository;
+use App\Repository\PostRepository;
 use App\Repository\SalesOffersRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use phpDocumentor\Reflection\Types\This;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -35,9 +38,9 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Security;
 
-#[Route('/seles-offers')]
+#[Route('/blog')]
 #[IsGranted('IS_AUTHENTICATED_REMEMBERED')]
-class CarSelesOffersController extends AbstractController
+class BlogController extends AbstractController
 {
     private $formFactory;
     private $brandRepository;
@@ -50,6 +53,8 @@ class CarSelesOffersController extends AbstractController
     private $userRepository;
     private $entityManager;
     private $offersRepository;
+    private $postRepository;
+    private $commentRepository;
 
 
     public function __construct(
@@ -63,7 +68,9 @@ class CarSelesOffersController extends AbstractController
         Security $security,
         UserRepository $userRepository,
         EntityManagerInterface $entityManager,
-        SalesOffersRepository $offersRepository
+        SalesOffersRepository $offersRepository,
+        PostRepository $postRepository,
+        CommentRepository $commentRepository
     ) {
         $this->formFactory = $formFactory;
         $this->brandRepository = $brandRepository;
@@ -76,10 +83,12 @@ class CarSelesOffersController extends AbstractController
         $this->userRepository = $userRepository;
         $this->entityManager = $entityManager;
         $this->offersRepository = $offersRepository;
+        $this->postRepository = $postRepository;
+        $this->commentRepository = $commentRepository;
     }
 
-    #[Route('/', name: 'car_seles_offers_brand')]
-    public function choosingBrand(Request $request): Response
+    #[Route('/', name: 'blog_brand')]
+    public function choosingBrand(Request $request): RedirectResponse|Response
     {
         $form = $this->formFactory->create(ChoicesBrandType::class);
 
@@ -89,10 +98,11 @@ class CarSelesOffersController extends AbstractController
             $brand = $form->getData()['brand'];
             return $this->redirect($request->getUri().$brand->getName());
         }
-        return $this->render('/car_seles_offers/index.html.twig',['form' => $form->createView()]);
+        return $this->render('/blog/index.html.twig',[
+            'form' => $form->createView()]);
     }
 
-    #[Route('/{brand}/', name: 'car_seles_offers_model')]
+    #[Route('/{brand}/', name: 'blog_model')]
     #[ParamConverter('brand', options: ['mapping' => ['brand' => 'name']])]
     public function choosingModel(Request $request,Brand $brand): RedirectResponse|Response
     {
@@ -100,7 +110,7 @@ class CarSelesOffersController extends AbstractController
         if (empty($model)) {
             throw new NotFoundHttpException();
         }
-        $offers = $this->offersRepository->getOffersByBrand($brand);
+        $posts = $this->postRepository->getPostsByBrand($brand);
 
         $form = $this->formFactory->create(ChoicesModelType::class,[],[
             'model' => $model
@@ -113,14 +123,14 @@ class CarSelesOffersController extends AbstractController
 
             return $this->redirect($request->getUri().$model);
         }
-        return $this->render('/car_seles_offers/index.html.twig',[
+        return $this->render('/blog/index.html.twig',[
             'brand' => $brand->getName(),
             'form' => $form->createView(),
-            'offers' => $offers
+            'posts' => $posts
         ]);
     }
 
-    #[Route('/{brand}/{model}/', name: 'car_seles_offers_generation')]
+    #[Route('/{brand}/{model}/', name: 'blog_generation')]
     #[ParamConverter('brand', options: ['mapping' => ['brand' => 'name']])]
     #[ParamConverter('model', options: ['mapping' => ['model' => 'name']])]
     public function choosingGeneration(Request $request,Brand $brand,Model $model): RedirectResponse|Response
@@ -129,7 +139,7 @@ class CarSelesOffersController extends AbstractController
         if (empty($generation)) {
             throw new NotFoundHttpException();
         }
-        $offers = $this->offersRepository->getOffersByModel($brand,$model);
+        $posts = $this->postRepository->getPostsByModel($brand,$model);
 
         $form = $this->formFactory->create(ChoicesGenerationType::class,[],[
             'generation' => $generation
@@ -141,15 +151,15 @@ class CarSelesOffersController extends AbstractController
             $generation = $form->getData()['generation'];
             return $this->redirect($request->getUri().$generation);
         }
-        return $this->render('/car_seles_offers/index.html.twig',[
+        return $this->render('/blog/index.html.twig',[
             'brand' => $brand->getName(),
             'model' => $model->getName(),
             'form' => $form->createView(),
-            'offers' => $offers
+            'posts' => $posts
         ]);
     }
 
-    #[Route('/{brand}/{model}/{generation}/', name: 'car_seles_offers_body')]
+    #[Route('/{brand}/{model}/{generation}/', name: 'blog_body')]
     #[ParamConverter('brand', options: ['mapping' => ['brand' => 'name']])]
     #[ParamConverter('model', options: ['mapping' => ['model' => 'name']])]
     #[ParamConverter('generation', options: ['mapping' => ['generation' => 'name']])]
@@ -159,7 +169,7 @@ class CarSelesOffersController extends AbstractController
         if (empty($body)) {
             throw new NotFoundHttpException();
         }
-        $offers = $this->offersRepository->getOffersByGeneration($brand,$model,$generation);
+        $posts = $this->postRepository->getPostsByGeneration($brand,$model,$generation);
 
         $form = $this->formFactory->create(ChoicesBodyType::class,[],[
             'body' => $body,
@@ -171,16 +181,16 @@ class CarSelesOffersController extends AbstractController
             $body = $form->getData()['body'];
             return $this->redirect($request->getUri().$body);
         }
-        return $this->render('/car_seles_offers/index.html.twig',[
+        return $this->render('/blog/index.html.twig',[
             'brand' => $brand->getName(),
             'model' => $model->getName(),
             'generation' => $generation->getName(),
             'form' => $form->createView(),
-            'offers' => $offers
+            'posts' => $posts
         ]);
     }
 
-    #[Route('/{brand}/{model}/{generation}/{body}/', name: 'car_seles_offers_engine')]
+    #[Route('/{brand}/{model}/{generation}/{body}/', name: 'blog_engine')]
     #[ParamConverter('brand', options: ['mapping' => ['brand' => 'name']])]
     #[ParamConverter('model', options: ['mapping' => ['model' => 'name']])]
     #[ParamConverter('generation', options: ['mapping' => ['generation' => 'name']])]
@@ -188,10 +198,11 @@ class CarSelesOffersController extends AbstractController
     public function choosingEngine(Request $request,Brand $brand,Model $model,Generation $generation,CarBody $body): RedirectResponse|Response
     {
         $engine = $this->engineRepository->getEngineWithCarBodyGenerationBrandModelRelation($brand,$model,$generation,$body);
+        //dd($engine);
         if (empty($engine)) {
             throw new NotFoundHttpException();
         }
-        $offers = $this->offersRepository->getOffersByCarBody($brand,$model,$generation,$body);
+        $posts = $this->postRepository->getPostsByCarBody($brand,$model,$generation,$body);
 
         $form = $this->formFactory->create(ChoicesEngineType::class,[],[
             'engine' => $engine
@@ -203,17 +214,17 @@ class CarSelesOffersController extends AbstractController
             $engine = $form->getData()['engine'];
             return $this->redirect($request->getUri().$engine);
         }
-        return $this->render('/car_seles_offers/index.html.twig',[
+        return $this->render('/blog/index.html.twig',[
             'brand' => $brand->getName(),
             'model' => $model->getName(),
             'generation' => $generation->getName(),
             'body' => $body->getName(),
             'form' => $form->createView(),
-            'offers' => $offers
+            'posts' => $posts
         ]);
     }
 
-    #[Route('/{brand}/{model}/{generation}/{body}/{engine}/', name: 'car_seles_offers_all')]
+    #[Route('/{brand}/{model}/{generation}/{body}/{engine}/', name: 'blog_all')]
     #[ParamConverter('brand', options: ['mapping' => ['brand' => 'name']])]
     #[ParamConverter('model', options: ['mapping' => ['model' => 'name']])]
     #[ParamConverter('generation', options: ['mapping' => ['generation' => 'name']])]
@@ -226,26 +237,53 @@ class CarSelesOffersController extends AbstractController
         {
             throw new NotFoundHttpException();
         }
-        $offers = $this->offersRepository->getOffersByEngine($brand,$model,$generation,$body,$engine);
+        $posts = $this->postRepository->getPostsByEngine($brand,$model,$generation,$body,$engine);
 
-        return $this->render('/car_seles_offers/index.html.twig',[
+        return $this->render('/blog/index.html.twig',[
             'brand' => $brand->getName(),
             'model' => $model->getName(),
             'generation' => $generation->getName(),
             'body' => $body->getName(),
             'engine' => $engine->getName(),
-            'offers' => $offers,
+            'posts' => $posts,
             'new' => true
-        ]);
+            ]);
     }
 
-    #[Route('/{brand}/{model}/{generation}/{body}/{engine}/new', name: 'car_seles_offers_new')]
+    #[Route('/{brand}/{model}/{generation}/{body}/{engine}/post/{post}', name: 'blog_selected_post')]
     #[ParamConverter('brand', options: ['mapping' => ['brand' => 'name']])]
     #[ParamConverter('model', options: ['mapping' => ['model' => 'name']])]
     #[ParamConverter('generation', options: ['mapping' => ['generation' => 'name']])]
     #[ParamConverter('body', options: ['mapping' => ['body' => 'name']])]
     #[ParamConverter('engine', options: ['mapping' => ['engine' => 'name']])]
-    public function newOffert(Request $request,Brand $brand,Model $model,Generation $generation,CarBody $body, Engine $engine)
+    #[ParamConverter('post')]
+    public function showBlogPost(Request $request,Brand $brand,Model $model,Generation $generation,CarBody $body, Engine $engine,Post $post)
+    {
+        $components = $this->engineRepository->checkCarExist($brand,$model,$generation,$body,$engine);
+        if (empty($components))
+        {
+            throw new NotFoundHttpException();
+        }
+        $comments = $this->commentRepository->getCommentsPost($post);
+
+        return $this->render('/blog/show.html.twig',[
+            'brand' => $brand->getName(),
+            'model' => $model->getName(),
+            'generation' => $generation->getName(),
+            'body' => $body->getName(),
+            'engine' => $engine->getName(),
+            'post' => $post,
+            'comments' => $comments
+        ]);
+    }
+
+    #[Route('/{brand}/{model}/{generation}/{body}/{engine}/post-new/', name: 'blog_new_post')]
+    #[ParamConverter('brand', options: ['mapping' => ['brand' => 'name']])]
+    #[ParamConverter('model', options: ['mapping' => ['model' => 'name']])]
+    #[ParamConverter('generation', options: ['mapping' => ['generation' => 'name']])]
+    #[ParamConverter('body', options: ['mapping' => ['body' => 'name']])]
+    #[ParamConverter('engine', options: ['mapping' => ['engine' => 'name']])]
+    public function newPost(Request $request,Brand $brand,Model $model,Generation $generation,CarBody $body, Engine $engine)
     {
         $components = $this->engineRepository->checkCarExist($brand,$model,$generation,$body,$engine);
         if (empty($components))
@@ -253,37 +291,28 @@ class CarSelesOffersController extends AbstractController
             throw new NotFoundHttpException();
         }
 
-        $offer = new SalesOffers();
-        $form = $this->formFactory->create(NewOfferType::class,$offer);
+        $post = new Post();
+        $form = $this->formFactory->create(PostType::class,$post);
 
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid())
         {
+            $post = $form->getData();
 
-            $offer = $form->getData();
-            $file = ($request->files->get('new_offer')['file']);
+            $post->setBrand($brand);
+            $post->setModel($model);
+            $post->setGeneration($generation);
+            $post->setCarBody($body);
+            $post->setEngine($engine);
+            $post->setUser($this->userRepository->find($this->security->getUser()));
 
-            if ($file)
-            {
-                $filename = md5(uniqid()).".". $file->guessClientExtension();
-                $file->move($this->parameterBag->get('uploads_dir_offer'),$filename);
-            }
-
-            $offer->setBrand($brand);
-            $offer->setModel($model);
-            $offer->setGeneration($generation);
-            $offer->setCarBody($body);
-            $offer->setEngine($engine);
-            $offer->setFile($filename);
-            $offer->setUser($this->userRepository->find($this->security->getUser()));
-
-            $this->entityManager->persist($offer);
+            $this->entityManager->persist($post);
             $this->entityManager->flush();
 
-            $this->addFlash('success',"Your offer was added");
+            $this->addFlash('success',"Your post was added");
 
-            return $this->redirectToRoute('car_seles_offers_all',[
+            return $this->redirectToRoute('blog_all',[
                 'brand' => $brand,
                 'model' => $model,
                 'generation' => $generation,
@@ -291,32 +320,86 @@ class CarSelesOffersController extends AbstractController
                 'engine' => $engine
             ]);
         }
-
-        return $this->render('/car_seles_offers/new.html.twig',[
-            'form' => $form->createView()
+        return $this->render('/blog/new.html.twig',[
+            'form' => $form->createView(),
+            'brand' => $brand->getName(),
+            'model' => $model->getName(),
+            'generation' => $generation->getName(),
+            'body' => $body->getName(),
+            'engine' => $engine->getName(),
         ]);
     }
 
-    #[Route('/{brand}/{model}/{generation}/{body}/{engine}/show/{offer}', name: 'car_seles_offers_show')]
+    #[Route('/{brand}/{model}/{generation}/{body}/{engine}/post/{post}/comment-new', name: 'blog_new_comment',methods: 'POST')]
     #[ParamConverter('brand', options: ['mapping' => ['brand' => 'name']])]
     #[ParamConverter('model', options: ['mapping' => ['model' => 'name']])]
     #[ParamConverter('generation', options: ['mapping' => ['generation' => 'name']])]
     #[ParamConverter('body', options: ['mapping' => ['body' => 'name']])]
     #[ParamConverter('engine', options: ['mapping' => ['engine' => 'name']])]
-    #[ParamConverter('offer')]
-    public function show(Request $request,Brand $brand,Model $model,Generation $generation,CarBody $body, Engine $engine, SalesOffers $offer)
+    #[ParamConverter('post')]
+    public function newComment(Request $request,Brand $brand,Model $model,Generation $generation,CarBody $body, Engine $engine, Post $post)
     {
-        return $this->render('/car_seles_offers/show.html.twig',[
-            'brand' => $brand,
-            'model' => $model,
-            'generation' => $generation,
-            'body' => $body,
-            'engine' => $engine,
-            'offer' => $offer
-        ]);
-    }
-    public function remove()
-    {
+        if (! $request->isXmlHttpRequest()) {
 
+            return new JsonResponse(['error' => 'this is not ajax.'], 400);
+        }
+
+        $components = $this->engineRepository->checkCarExist($brand,$model,$generation,$body,$engine);
+        if (empty($components))
+        {
+            throw new NotFoundHttpException();
+        }
+
+        $comment = new Comment();
+
+        $comment->setUser($this->userRepository->find($this->getUser()));
+        $comment->setPost($post);
+        $comment->setContent($request->request->get('text'));
+
+        $this->entityManager->persist($comment);
+        $this->entityManager->flush();
+
+        return new JsonResponse([
+            'content' => $comment->getContent(),
+            'user' => $comment->getUser()->getName(). " ".$comment->getUser()->getSurname(),
+            'createdAt' => date_format(new \DateTime('now'),"F jS \\a\\t g:ia"),
+            'createdBy' => $comment->getUser()->getName()." ".$comment->getUser()->getSurname(),
+            'comment' => $comment->getId()
+
+        ],200);
+    }
+
+    #[Route('/{brand}/{model}/{generation}/{body}/{engine}/post/{post}/remove-comment', name: 'blog_remove_comment',methods: 'DELETE')]
+    #[ParamConverter('brand', options: ['mapping' => ['brand' => 'name']])]
+    #[ParamConverter('model', options: ['mapping' => ['model' => 'name']])]
+    #[ParamConverter('generation', options: ['mapping' => ['generation' => 'name']])]
+    #[ParamConverter('body', options: ['mapping' => ['body' => 'name']])]
+    #[ParamConverter('engine', options: ['mapping' => ['engine' => 'name']])]
+    #[ParamConverter('post')]
+    public function removeComment(Request $request,Brand $brand,Model $model,Generation $generation,CarBody $body, Engine $engine, Post $post)
+    {
+        if (! $request->isXmlHttpRequest()) {
+
+            return new JsonResponse(['error' => 'this is not ajax.'], 400);
+        }
+
+        $comment = $this->commentRepository->find($request->request->get('comment'));
+        if (! $this->getUser() == $comment->getUser())
+        {
+            return new JsonResponse(['access_denied' => 'User does not have permission'],401);
+        }
+
+        $components = $this->engineRepository->checkCarExist($brand,$model,$generation,$body,$engine);
+        if (empty($components))
+        {
+            throw new NotFoundHttpException();
+        }
+
+        $this->entityManager->remove($comment);
+        $this->entityManager->flush();
+
+        return new JsonResponse([
+            'content' => 'Post was remove'
+        ],200);
     }
 }

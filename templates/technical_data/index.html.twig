@@ -3,7 +3,22 @@
 {% block title %}Technical data{% endblock %}
 
 {% block body %}
-    {{ dump() }}
+    <a href="{{ path('technical_data_brand') }}">| Select |</a>
+    {% if brand|default %}
+        <a href="{{ path('technical_data_model', { brand : brand}) }}">| {{ brand }} |</a>
+        {% if model|default %}
+            <a href="{{ path('technical_data_generation', { brand : brand, model : model}) }}">| {{ model }} |</a>
+            {% if generation|default %}
+                <a href="{{ path('technical_data_body', { brand : brand, model : model, generation : generation}) }}">| {{ generation }} |</a>
+                {% if body|default %}
+                    <a href="{{ path('technical_data_engine', { brand : brand, model : model, generation : generation, body : body}) }}">| {{ body }} |</a>
+                    {% if engine|default %}
+                        <a href="{{ path('technical_data_all', { brand : brand, model : model, generation : generation, body : body, engine : engine}) }}">| {{ engine }} |</a>
+                    {% endif %}
+                {% endif %}
+            {% endif %}
+        {% endif %}
+    {% endif %}
     {% if form|default %}
         {{ form(form) }}
     {% endif %}
