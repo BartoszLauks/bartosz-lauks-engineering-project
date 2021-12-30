@@ -1,0 +1,35 @@
+{% extends 'Header.html.twig' %}
+
+{% block title %}Your car seles offers{% endblock %}
+
+{% block body %}
+    {{ dump() }}
+    {% if offers is empty %}
+        <div class="center-bar">
+            <h4>You don't have offers</h4>
+        </div>
+    {% endif %}
+    {% if offers|default %}
+        {% for offer in offers %}
+            <div class="card">
+                <a href="{{ path('car_seles_offers_show', { brand : offer.brand, model : offer.model, generation : offer.generation,
+                    body : offer.carBody, engine : offer.engine, offer : offer.id}) }}" style="color: black">
+                    <img class="card-img-top" src="/uploads/offers/{{ offer.file }}" alt="Card image cap" style="max-width: 300px;max-height: 300px">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ offer.brand.name }}</h5>
+                        <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+                        <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+                        {% if app.user == offer.user %}
+                            <a href="{{ path('car_seles_offers_remove',{
+                                brand : offer.brand, model : offer.model, generation : offer.generation, body : offer.carBody,
+                                engine : offer.engine, offer : offer.id }) }}">
+                                <button class="btn btn-danger">Remove</button>
+                            </a>
+                        {% endif %}
+                    </div>
+                </a>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+{% endblock %}

@@ -19,6 +19,9 @@
             {% endif %}
         {% endif %}
     {% endif %}
+    <div class="center-bar-post">
+        <h4>Post</h4>
+    </div>
     <div class="card">
         <div class="card-body">
             <h5 class="card-title">{{ post.title }}</h5>
@@ -31,6 +34,9 @@
     <hr>
     <br>
     <div class="comments">
+        <div class="center-bar-comment">
+            <h4>Comments</h4>
+        </div>
         {% for comment in comments %}
             <div class="card">
                 <div class="card-body">

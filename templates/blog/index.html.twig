@@ -33,23 +33,24 @@
         {{ form(form) }}
     {% endif %}
     <br>
+    {% if posts is empty %}
+        <div class="center-bar">
+            <h4>There are no posts for the selected components</h4>
+        </div>
+    {% endif %}
     {% if posts|default %}
-        {% if posts|length == 0 %}
-            <h4>For select components, don't have posts</h4>
-        {% else %}
-            {% for post in posts %}
-                <a href="{{ path('blog_selected_post', { brand : post.brand, model : post.model, generation : post.generation,
-                    body : post.carBody, engine : post.engine, post : post.id}) }}">
-                    <div class="card">
-                        <div class="card-body">
-                            <h5 class="card-title">{{ post.title }}</h5>
-                            <p class="card-text">{{ post.content }}</p>
-                            <p class="card-text"><small class="text-muted">Added at : {{ post.createdAt|date("F jS \\a\\t g:ia") }}.
-                                    By : {{ post.user.name }} {{ post.user.surname }}</small></p>
-                        </div>
+        {% for post in posts %}
+            <a href="{{ path('blog_selected_post', { brand : post.brand, model : post.model, generation : post.generation,
+                body : post.carBody, engine : post.engine, post : post.id}) }}" style="color: black">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ post.title }}</h5>
+                        <p class="card-text">{{ post.content }}</p>
+                        <p class="card-text"><small class="text-muted">Added at : {{ post.createdAt|date("F jS \\a\\t g:ia") }}.
+                                By : {{ post.user.name }} {{ post.user.surname }}</small></p>
                     </div>
-                </a>
-            {% endfor %}
-        {% endif %}
+                </div>
+            </a>
+        {% endfor %}
     {% endif %}
 {% endblock %}

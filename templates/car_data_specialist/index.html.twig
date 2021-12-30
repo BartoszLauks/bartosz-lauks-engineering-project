@@ -23,14 +23,17 @@
         {{ form(form) }}
     {% endif %}
 
-    {% for comment in comments %}
-        <div class="card">
-            <div class="card-body">
-                {{ comment.content|raw }}
-                <p class="card-text"><small class="text-muted">Comment added at : {{ comment.createdAt|date("F jS \\a\\t g:ia") }}</small></p>
-                <p class="card-text"><small class="text-muted">By : {{ comment.user.name }} {{ comment.user.surname }}</small></p>
+    {% if comments|default %}
+        {% for comment in comments %}
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">{{ comment.brand }} {{ comment.model }} {{ comment.generation }} {{ comment.body }} {{ comment.engine }} </h5>
+                    {{ comment.content|raw }}
+                    <p class="card-text"><small class="text-muted">Comment added at : {{ comment.createdAt|date("F jS \\a\\t g:ia") }}</small></p>
+                    <p class="card-text"><small class="text-muted">By : {{ comment.user.name }} {{ comment.user.surname }}</small></p>
+                </div>
             </div>
-        </div>
-    {% endfor %}
+        {% endfor %}
+    {% endif %}
 
 {% endblock %}

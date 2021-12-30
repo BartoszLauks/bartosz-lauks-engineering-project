@@ -52,7 +52,7 @@
                     margin-right: auto;
                     padding: 15px;
                     width: 500px;
-                    border: 3px solid green;
+                    border: 15px outset #7BA4A8;
                 }
                 .btn-primary {
                     transition-duration: 0.4s;
@@ -122,9 +122,39 @@
                     position: center;
 
                 }
-                .show-car-context
+                .center
                 {
-
+                    margin: auto;
+                    width: 50%;
+                    border: 15px outset #7BA4A8;
+                    padding: 10px;
+                }
+                .center-bar
+                {
+                    text-align: center;
+                    padding: 15px;
+                    background-color: #7BA4A8;
+                }
+                .center-bar-post
+                {
+                    text-align: center;
+                    padding: 15px;
+                    background-color: #7BA4A8;
+                    margin-top: 15px;
+                    margin-bottom: 15px;
+                }
+                .center-bar-comment
+                {
+                    text-align: center;
+                    padding: 15px;
+                    background-color: #7BA4A8;
+                    margin-bottom: 15px;
+                }
+                .center > img
+                {
+                    display: block;
+                    margin-left: auto;
+                    margin-right: auto;
                 }
                 .card
                 {
@@ -154,13 +184,17 @@
                             <a class="nav-link" href={{ path('technical_data_brand') }}>Technical Data</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href={{ path('car_seles_offers_brand') }}>Seles Offers</a>
+                            <a class="nav-link" href={{ path('car_specialist_brand') }}>Specialist Comments</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href={{ path('blog_brand') }}>Blog</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href={{ path('car_specialist_brand') }}>Specialist Comments</a>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="{{ path('car_seles_offers_brand') }}" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Seles Offers</a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <a class="dropdown-item" href={{ path('car_seles_offers_brand') }}>Seles Offers</a>
+                                <a class="dropdown-item" href="{{ path('car_seles_offers_user') }}">My Seles Offers</a>
+                            </div>
                         </li>
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -202,7 +236,6 @@
 
         <div id="body">
             <div id="advertising" >
-                {# <img src="{{ asset('/default.png') }}" alt=""> #}
                 {{ render(controller('App\\Controller\\AdvertisingController::index')) }}
             </div>
             {% for label, messages in app.flashes %}
