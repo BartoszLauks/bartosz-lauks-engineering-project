@@ -24,10 +24,19 @@ class PostRepository extends ServiceEntityRepository
         parent::__construct($registry, Post::class);
     }
 
+    public function getPosts()
+    {
+        return $this->createQueryBuilder('p')
+            ->orderBy('p.createdAt','DESC')
+            ->getQuery()
+            ->getResult()
+            ;
+    }
+
     public function getPostsByBrand(Brand $brand)
     {
         return $this->createQueryBuilder('p')
-            ->orderBy('p.createdAt','ASC')
+            ->orderBy('p.createdAt','DESC')
             ->where('p.brand = :brand')
             ->setParameter('brand',$brand)
             ->getQuery()
@@ -37,7 +46,7 @@ class PostRepository extends ServiceEntityRepository
     public function getPostsByModel(Brand $brand, Model $model)
     {
         return $this->createQueryBuilder('p')
-            ->orderBy('p.createdAt','ASC')
+            ->orderBy('p.createdAt','DESC')
             ->where('p.brand = :brand')
             ->andWhere('p.model = :model')
             ->setParameter('brand',$brand)
@@ -49,7 +58,7 @@ class PostRepository extends ServiceEntityRepository
     public function getPostsByGeneration(Brand $brand, Model $model, Generation $generation)
     {
         return $this->createQueryBuilder('p')
-            ->orderBy('p.createdAt','ASC')
+            ->orderBy('p.createdAt','DESC')
             ->where('p.brand = :brand')
             ->andWhere('p.model = :model')
             ->andWhere('p.generation = :generation')
@@ -63,7 +72,7 @@ class PostRepository extends ServiceEntityRepository
     public function getPostsByCarBody(Brand $brand, Model $model, Generation $generation, CarBody $body)
     {
         return $this->createQueryBuilder('p')
-            ->orderBy('p.createdAt','ASC')
+            ->orderBy('p.createdAt','DESC')
             ->where('p.brand = :brand')
             ->andWhere('p.model = :model')
             ->andWhere('p.generation = :generation')
@@ -79,7 +88,7 @@ class PostRepository extends ServiceEntityRepository
     public function getPostsByEngine(Brand $brand, Model $model, Generation $generation, CarBody $body, Engine $engine)
     {
         return $this->createQueryBuilder('p')
-            ->orderBy('p.createdAt','ASC')
+            ->orderBy('p.createdAt','DESC')
             ->where('p.brand = :brand')
             ->andWhere('p.model = :model')
             ->andWhere('p.generation = :generation')

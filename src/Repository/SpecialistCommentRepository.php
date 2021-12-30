@@ -27,7 +27,7 @@ class SpecialistCommentRepository extends ServiceEntityRepository
     public function getSpecialistComment()
     {
         return $this->createQueryBuilder('s')
-            ->orderBy('s.createdAt', 'ASC')
+            ->orderBy('s.createdAt', 'DESC')
             ->getQuery()
             ->getResult();
     }
@@ -35,7 +35,7 @@ class SpecialistCommentRepository extends ServiceEntityRepository
     public function getSpecialistCommentByBrand(Brand $brand)
     {
         return $this->createQueryBuilder('s')
-            ->orderBy('s.createdAt', 'ASC')
+            ->orderBy('s.createdAt', 'DESC')
             ->where('s.brand = :brand')
             ->setParameter('brand',$brand)
             ->getQuery()
@@ -45,7 +45,7 @@ class SpecialistCommentRepository extends ServiceEntityRepository
     public function getSpecialistCommentByModel(Brand $brand, Model $model)
     {
         return $this->createQueryBuilder('s')
-            ->orderBy('s.createdAt', 'ASC')
+            ->orderBy('s.createdAt', 'DESC')
             ->where('s.brand = :brand')
             ->andWhere('s.model = :model')
             ->setParameter('brand',$brand)
@@ -57,7 +57,7 @@ class SpecialistCommentRepository extends ServiceEntityRepository
     public function getSpecialistCommentByGeneration(Brand $brand, Model $model, Generation $generation)
     {
         return $this->createQueryBuilder('s')
-            ->orderBy('s.createdAt', 'ASC')
+            ->orderBy('s.createdAt', 'DESC')
             ->where('s.brand = :brand')
             ->andWhere('s.model = :model')
             ->andWhere('s.generation = :generation')
@@ -71,7 +71,7 @@ class SpecialistCommentRepository extends ServiceEntityRepository
     public function getSpecialistCommentByCarBody(Brand $brand, Model $model, Generation $generation, CarBody $body)
     {
         return $this->createQueryBuilder('s')
-            ->orderBy('s.createdAt', 'ASC')
+            ->orderBy('s.createdAt', 'DESC')
             ->where('s.brand = :brand')
             ->andWhere('s.model = :model')
             ->andWhere('s.generation = :generation')
@@ -87,7 +87,7 @@ class SpecialistCommentRepository extends ServiceEntityRepository
     public function getSpecialistCommentByEngine(Brand $brand, Model $model, Generation $generation, CarBody $body, Engine $engine)
     {
         return $this->createQueryBuilder('s')
-            ->orderBy('s.createdAt', 'ASC')
+            ->orderBy('s.createdAt', 'DESC')
             ->where('s.brand = :brand')
             ->andWhere('s.model = :model')
             ->andWhere('s.generation = :generation')

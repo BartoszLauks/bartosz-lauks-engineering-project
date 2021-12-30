@@ -23,7 +23,7 @@ class CommentRepository extends ServiceEntityRepository
     public function getCommentsPost(Post $post)
     {
         return $this->createQueryBuilder('c')
-            ->orderBy('c.createAt','ASC')
+            ->orderBy('c.createAt','DESC')
             ->where('c.post = :post')
             ->setParameter('post',$post)
             ->getQuery()

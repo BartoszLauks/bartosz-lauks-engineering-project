@@ -22,7 +22,7 @@ class NewsesRepository extends ServiceEntityRepository
     public function getNewses()
     {
         return $this->createQueryBuilder('n')
-            ->orderBy('n.createdAt',"DESC")
+            ->orderBy('n.createdAt','DESC')
             ->setMaxResults(3)
             ->getQuery()
             ->getResult()
