@@ -38,7 +38,7 @@
         {% else %}
             {% for offer in offers %}
                 <a href="{{ path('car_seles_offers_show', { brand : offer.brand, model : offer.model, generation : offer.generation,
-                    body : offer.carBody, engine : offer.engine, offer : offer.id}) }}">
+                    body : offer.carBody, engine : offer.engine, offer : offer.id}) }}" style="color: black">
                     <div class="card">
                         <img class="card-img-top" src="/uploads/offers/{{ offer.file }}" alt="Card image cap" style="max-width: 300px;max-height: 300px">
                         <div class="card-body">
