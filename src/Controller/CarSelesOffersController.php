@@ -310,7 +310,7 @@ class CarSelesOffersController extends AbstractController
     #[ParamConverter('body', options: ['mapping' => ['body' => 'name']])]
     #[ParamConverter('engine', options: ['mapping' => ['engine' => 'name']])]
     #[ParamConverter('offer')]
-    public function show(Request $request,Brand $brand,Model $model,Generation $generation,CarBody $body, Engine $engine, SalesOffers $offer): Response
+    public function showOffer(Request $request,Brand $brand,Model $model,Generation $generation,CarBody $body, Engine $engine, SalesOffers $offer): Response
     {
         return $this->render('/car_seles_offers/show.html.twig',[
             'brand' => $brand,
@@ -328,7 +328,7 @@ class CarSelesOffersController extends AbstractController
     #[ParamConverter('body', options: ['mapping' => ['body' => 'name']])]
     #[ParamConverter('engine', options: ['mapping' => ['engine' => 'name']])]
     #[ParamConverter('offer')]
-    public function remove(Brand $brand,Model $model,Generation $generation,CarBody $body, Engine $engine, SalesOffers $offer): RedirectResponse
+    public function removeOffer(Brand $brand,Model $model,Generation $generation,CarBody $body, Engine $engine, SalesOffers $offer): RedirectResponse
     {
         if ($this->security->getUser() !== $offer->getUser())
         {
@@ -358,6 +358,7 @@ class CarSelesOffersController extends AbstractController
             'offer' => $offer
         ]));
     }
+
     #[Route('-user/', name: 'car_seles_offers_user')]
     public function userOffers()
     {
@@ -366,5 +367,24 @@ class CarSelesOffersController extends AbstractController
         return $this->render('/car_seles_offers/userOffers.html.twig',[
             'offers' => $offers
         ]);
+    }
+
+    #[Route('-user/offer/{offer}/remove', name: 'car_seles_offers_user_remove')]
+    #[ParamConverter('offer')]
+    public function userOfferRemove(SalesOffers $offer)
+    {
+        if ($this->security->getUser() !== $offer->getUser())
+        {
+            $this->addFlash('danger', "Access denied. This is not your offer");
+
+            return $this->redirect($this->generateUrl('car_seles_offers_user'));
+        }
+
+        $this->entityManager->remove($offer);
+        $this->entityManager->flush();
+
+        $this->addFlash('success',"Your offert was remove");
+
+        return $this->redirect($this->generateUrl('car_seles_offers_user'));
     }
 }

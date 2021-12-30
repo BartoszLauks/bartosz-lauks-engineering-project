@@ -10,6 +10,7 @@ use App\Entity\Model;
 use App\Entity\Post;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\Security\Core\Security;
 
 /**
  * @method Post|null find($id, $lockMode = null, $lockVersion = null)
@@ -19,9 +20,23 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class PostRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    private $security;
+
+    public function __construct(ManagerRegistry $registry,Security $security)
     {
         parent::__construct($registry, Post::class);
+        $this->security = $security;
+    }
+
+    public function getPostsUser()
+    {
+        return $this->createQueryBuilder('p')
+            ->orderBy('p.createdAt','DESC')
+            ->where('p.user = :user')
+            ->setParameter('user',$this->security->getUser())
+            ->getQuery()
+            ->getResult()
+            ;
     }
 
     public function getPosts()

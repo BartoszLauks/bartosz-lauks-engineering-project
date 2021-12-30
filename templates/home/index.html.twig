@@ -7,6 +7,7 @@
         <div class="news-bar">
             <h1>NEWS</h1>
         </div>
+    {% if newses|length >= 3 %}
         <div class="card-deck">
             {% for news in newses %}
                 <div class="card" style="position: static;">
@@ -23,6 +24,8 @@
 
                 </div>
             {% endfor %}
+        </div>
+    {% endif %}
     </div>
     <br>
 

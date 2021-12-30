@@ -3,7 +3,6 @@
 {% block title %}Car seles offers{% endblock %}
 
 {% block body %}
-    {{ dump() }}
         <a href="{{ path('car_seles_offers_brand') }}">| Select |</a>
         {% if brand|default %}
             <a href="{{ path('car_seles_offers_model', { brand : brand}) }}">| {{ brand }} |</a>
@@ -33,30 +32,34 @@
         {{ form(form) }}
     {% endif %}
     {% if offers is empty %}
-        <div class="center-bar">
+        <div class="center-bar-warning">
             <h4>For select components, don't have offers</h4>
         </div>
     {% endif %}
     {% if offers|default %}
         {% for offer in offers %}
-            <div class="card">
-                <a href="{{ path('car_seles_offers_show', { brand : offer.brand, model : offer.model, generation : offer.generation,
-                    body : offer.carBody, engine : offer.engine, offer : offer.id}) }}" style="color: black">
-                <img class="card-img-top" src="/uploads/offers/{{ offer.file }}" alt="Card image cap" style="max-width: 300px;max-height: 300px">
-                <div class="card-body">
-                    <h5 class="card-title">{{ offer.brand.name }}</h5>
-                    <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
-                    <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
-                    {% if app.user == offer.user %}
-                        <a href="{{ path('car_seles_offers_remove',{
-                            brand : offer.brand, model : offer.model, generation : offer.generation, body : offer.carBody,
-                            engine : offer.engine, offer : offer.id }) }}">
-                            <button class="btn btn-danger">Remove</button>
-                        </a>
+            <a href="{{ path('car_seles_offers_show', { brand : offer.brand, model : offer.model, generation : offer.generation,
+                body : offer.carBody, engine : offer.engine, offer : offer.id}) }}" style="color: black">
+                <div class="card">
+                    <div class="card-body">
+                        <img class="card-img-top" src="/uploads/offers/{{ offer.file }}" alt="Card image cap" style="max-width: 300px;max-height: 300px">
+                        <br>
+                        <br>
+                        <h3 class="card-title">Price : {{ offer.price|number_format(2, '.', ',')  }} $</h3>
+                        <h4 class="card-title">Mileage : {{ offer.mileage|number_format(0, '.')  }} km</h4>
+                        <h5 class="card-title">{{ offer.brand.name }} {{ offer.model.name }} {{ offer.generation.name }} {{ offer.carBody.name }} {{ offer.engine.name }} </h5>
+                        <p class="card-text"><small class="text-muted">Comment added at : {{ offer.createdAt|date("F jS \\a\\t g:ia") }}</small></p>
+                        <p class="card-text"><small class="text-muted">By : {{ offer.user.name }} {{ offer.user.surname }}</small></p>
+                        {% if app.user == offer.user %}
+                            <a href="{{ path('car_seles_offers_remove',{
+                                brand : offer.brand, model : offer.model, generation : offer.generation, body : offer.carBody,
+                                engine : offer.engine, offer : offer.id }) }}">
+                                <button class="btn btn-danger">Remove</button>
+                            </a>
                     {% endif %}
+                    </div>
                 </div>
-                </a>
-            </div>
+            </a>
         {% endfor %}
     {% endif %}
 

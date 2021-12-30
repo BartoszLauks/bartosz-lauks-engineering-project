@@ -3,7 +3,6 @@
 {% block title %}Blog{% endblock %}
 
 {% block body %}
-    {{ dump() }}
     <a href="{{ path('blog_brand') }}">| Select |</a>
     {% if brand|default %}
         <a href="{{ path('blog_model', { brand : brand}) }}">| {{ brand }} |</a>
@@ -32,12 +31,14 @@
     {% if form|default %}
         {{ form(form) }}
     {% endif %}
-    <br>
     {% if posts is empty %}
-        <div class="center-bar">
+        <div class="center-bar-warning">
             <h4>There are no posts for the selected components</h4>
         </div>
     {% endif %}
+    <div class="center-bar-post">
+        <h4>Post</h4>
+    </div>
     {% if posts|default %}
         {% for post in posts %}
             <a href="{{ path('blog_selected_post', { brand : post.brand, model : post.model, generation : post.generation,
@@ -46,8 +47,8 @@
                     <div class="card-body">
                         <h5 class="card-title">{{ post.title }}</h5>
                         <p class="card-text">{{ post.content }}</p>
-                        <p class="card-text"><small class="text-muted">Added at : {{ post.createdAt|date("F jS \\a\\t g:ia") }}.
-                                By : {{ post.user.name }} {{ post.user.surname }}</small></p>
+                        <p class="card-text"><small class="text-muted">Comment added at : {{ post.createdAt|date("F jS \\a\\t g:ia") }}</small></p>
+                        <p class="card-text"><small class="text-muted">By : {{ post.user.name }} {{ post.user.surname }}</small></p>
                     </div>
                 </div>
             </a>

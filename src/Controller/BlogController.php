@@ -406,4 +406,33 @@ class BlogController extends AbstractController
             'content' => 'Post was remove'
         ],200);
     }
+
+    #[Route('-posts-user/', name: 'blog_user_post')]
+    public function userPosts()
+    {
+        $posts = $this->postRepository->getPostsUser();
+
+        return $this->render('/blog/userPosts.html.twig',[
+            'posts' => $posts
+        ]);
+    }
+
+    #[Route('-posts-user/post/{post}/remove', name: 'blog_user_post_remove')]
+    #[ParamConverter('post')]
+    public function userPostRemove(Post $post)
+    {
+        if ($this->security->getUser() !== $post->getUser())
+        {
+            $this->addFlash('danger', "Access denied. This is not your post");
+
+            return $this->redirect($this->generateUrl('blog_user_post'));
+        }
+
+        $this->entityManager->remove($post);
+        $this->entityManager->flush();
+
+        $this->addFlash('success',"Your post was remove");
+
+        return $this->redirect($this->generateUrl('blog_user_post'));
+    }
 }

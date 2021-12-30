@@ -135,6 +135,12 @@
                     padding: 15px;
                     background-color: #7BA4A8;
                 }
+                .center-bar-warning
+                {
+                    text-align: center;
+                    padding: 15px;
+                    background-image: linear-gradient(to bottom right, rgb(225, 177, 38), rgb(162, 129, 24));;
+                }
                 .center-bar-post
                 {
                     text-align: center;
@@ -186,11 +192,17 @@
                         <li class="nav-item">
                             <a class="nav-link" href={{ path('car_specialist_brand') }}>Specialist Comments</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href={{ path('blog_brand') }}>Blog</a>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="{{ path('blog_brand') }}" id="navbarDropdown"
+                               role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Blog</a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <a class="dropdown-item" href={{ path('blog_brand') }}>Blog</a>
+                                <a class="dropdown-item" href="{{ path('blog_user_post') }}">My Posts</a>
+                            </div>
                         </li>
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="{{ path('car_seles_offers_brand') }}" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Seles Offers</a>
+                            <a class="nav-link dropdown-toggle" href="{{ path('car_seles_offers_brand') }}" id="navbarDropdown"
+                               role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Seles Offers</a>
                             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                                 <a class="dropdown-item" href={{ path('car_seles_offers_brand') }}>Seles Offers</a>
                                 <a class="dropdown-item" href="{{ path('car_seles_offers_user') }}">My Seles Offers</a>

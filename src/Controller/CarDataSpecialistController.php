@@ -72,6 +72,7 @@ class CarDataSpecialistController extends AbstractController
         }
         return $this->render('/car_data_specialist/index.html.twig',[
             'form' => $form->createView(),
+            'comments' => []
         ]);
     }
 

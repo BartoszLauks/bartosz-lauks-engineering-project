@@ -23,6 +23,18 @@
         {{ form(form) }}
     {% endif %}
 
+    {% if brand|default %}
+        {% if comments is empty %}
+            <div class="center-bar-warning">
+                <h4>There are no comment for the selected components</h4>
+            </div>
+        {% endif %}
+    {% endif %}
+    {% if brand|default %}
+        <div class="center-bar-post">
+            <h4>Post</h4>
+        </div>
+    {% endif %}
     {% if comments|default %}
         {% for comment in comments %}
             <div class="card">
