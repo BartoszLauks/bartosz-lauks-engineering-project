@@ -46,14 +46,18 @@ class UserCrudController extends AbstractCrudController
             BooleanField::new('isVerified'),
             TextField::new('name')->onlyOnDetail(),
             TextField::new('surname')->onlyOnDetail(),
-            DateTimeField::new('createdAt')->hideOnForm(),
+            DateTimeField::new('createAt')->hideOnForm(),
             AssociationField::new('gender')->onlyOnDetail(),
             TextField::new('password')->hideWhenUpdating()->setMaxLength(10),
             TextField::new('post_code')->onlyOnDetail(),
             TextField::new('city')->onlyOnDetail(),
             TextField::new('street')->onlyOnDetail(),
             TextField::new('home_nr')->onlyOnDetail(),
-            TelephoneField::new('phone')->onlyOnDetail()
+            TelephoneField::new('phone')->onlyOnDetail(),
+            AssociationField::new('salesOffers')->onlyOnDetail(),
+            AssociationField::new('posts')->onlyOnDetail(),
+            AssociationField::new('comments')->onlyOnDetail(),
+            AssociationField::new('specialistComments')->onlyOnDetail(),
 
         ];
     }

@@ -107,11 +107,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $comments;
 
+    /**
+     * @ORM\OneToMany(targetEntity=SpecialistComment::class, mappedBy="user")
+     */
+    private $specialistComments;
+
     public function __construct()
     {
         $this->salesOffers = new ArrayCollection();
         $this->posts = new ArrayCollection();
         $this->comments = new ArrayCollection();
+        $this->specialistComments = new ArrayCollection();
     }
 
     /**
@@ -429,5 +435,35 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function __toString(): string
     {
         return $this->getEmail();
+    }
+
+    /**
+     * @return Collection|SpecialistComment[]
+     */
+    public function getSpecialistComments(): Collection
+    {
+        return $this->specialistComments;
+    }
+
+    public function addSpecialistComment(SpecialistComment $specialistComment): self
+    {
+        if (!$this->specialistComments->contains($specialistComment)) {
+            $this->specialistComments[] = $specialistComment;
+            $specialistComment->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSpecialistComment(SpecialistComment $specialistComment): self
+    {
+        if ($this->specialistComments->removeElement($specialistComment)) {
+            // set the owning side to null (unless already changed)
+            if ($specialistComment->getUser() === $this) {
+                $specialistComment->setUser(null);
+            }
+        }
+
+        return $this;
     }
 }

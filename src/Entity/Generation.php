@@ -49,11 +49,17 @@ class Generation
      */
     private $posts;
 
+    /**
+     * @ORM\OneToMany(targetEntity=SpecialistComment::class, mappedBy="generation")
+     */
+    private $specialistComments;
+
     public function __construct()
     {
         $this->carBodies = new ArrayCollection();
         $this->salesOffers = new ArrayCollection();
         $this->posts = new ArrayCollection();
+        $this->specialistComments = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -186,6 +192,36 @@ class Generation
             // set the owning side to null (unless already changed)
             if ($post->getGeneration() === $this) {
                 $post->setGeneration(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|SpecialistComment[]
+     */
+    public function getSpecialistComments(): Collection
+    {
+        return $this->specialistComments;
+    }
+
+    public function addSpecialistComment(SpecialistComment $specialistComment): self
+    {
+        if (!$this->specialistComments->contains($specialistComment)) {
+            $this->specialistComments[] = $specialistComment;
+            $specialistComment->setGeneration($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSpecialistComment(SpecialistComment $specialistComment): self
+    {
+        if ($this->specialistComments->removeElement($specialistComment)) {
+            // set the owning side to null (unless already changed)
+            if ($specialistComment->getGeneration() === $this) {
+                $specialistComment->setGeneration(null);
             }
         }
 

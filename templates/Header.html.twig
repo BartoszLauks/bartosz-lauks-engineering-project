@@ -106,7 +106,9 @@
                 {
                     float: left;
                 }
-                a { text-decoration: none; }
+                a:hover, a:visited, a:link, a:active {
+                    text-decoration: none;
+                }
                 .show-car
                 {
                     left: 0;
@@ -152,10 +154,13 @@
                             <a class="nav-link" href={{ path('technical_data_brand') }}>Technical Data</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href={{ path('car_seles_offers_brand') }}>Seles offers</a>
+                            <a class="nav-link" href={{ path('car_seles_offers_brand') }}>Seles Offers</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href={{ path('blog_brand') }}>Blog</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href={{ path('car_specialist_brand') }}>Specialist Comments</a>
                         </li>
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

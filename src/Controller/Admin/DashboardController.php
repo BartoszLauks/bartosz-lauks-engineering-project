@@ -2,6 +2,7 @@
 
 namespace App\Controller\Admin;
 
+use App\Controller\CarDataSpecialistController;
 use App\Entity\Advertising;
 use App\Entity\Brand;
 use App\Entity\CarBody;
@@ -15,6 +16,7 @@ use App\Entity\Model;
 use App\Entity\Newses;
 use App\Entity\Post;
 use App\Entity\SalesOffers;
+use App\Entity\SpecialistComment;
 use App\Entity\User;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
@@ -44,8 +46,9 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToRoute('WebSite', 'fas fa-globe', 'app_home');
         yield MenuItem::section('Website functionality');
         yield MenuItem::linkToCrud('Advertising', 'fas fa-money-check-alt', Advertising::class);
-        yield MenuItem::linkToCrud('Newses', 'fas fa-money-check-alt', Newses::class);
-        yield MenuItem::linkToCrud('Sales offers', 'fas fa-money-check-alt', SalesOffers::class);
+        yield MenuItem::linkToCrud('Newses', 'fas fa-newspaper', Newses::class);
+        yield MenuItem::linkToCrud('Sales offers', 'fas fa-hand-holding-usd', SalesOffers::class);
+        yield MenuItem::linkToCrud('Car data specialist', 'fas fa-user-graduate', SpecialistComment::class);
         yield MenuItem::section('Blog');
         yield MenuItem::linkToCrud('Posts', 'fas fa-comment-dots', Post::class);
         yield MenuItem::linkToCrud('Comments', 'fas fa-comments', Comment::class);

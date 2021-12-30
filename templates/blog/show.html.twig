@@ -32,14 +32,12 @@
     <br>
     <div class="comments">
         {% for comment in comments %}
-            <div class="card"
-            >
+            <div class="card">
                 <div class="card-body">
                     <p class="card-text">{{ comment.content }}</p>
                     <p class="card-text"><small class="text-muted">Comment added at : {{ comment.createAt|date("F jS \\a\\t g:ia") }}</small></p>
-                    <p class="card-text"><small class="text-muted">By : {{ post.user.name }} {{ post.user.surname }}</small></p>
+                    <p class="card-text"><small class="text-muted">By : {{ comment.user.name }} {{ comment.user.surname }}</small></p>
                     {% if comment.user == app.user  %}
-{#                        <button id="remove" value="{{ comment.id }}" class="btn btn-primary">Remove</button>#}
                         <div class="remove-comment" value={{ comment.id }}>
                             <button class="btn btn-danger">Remove</button>
                         </div>
