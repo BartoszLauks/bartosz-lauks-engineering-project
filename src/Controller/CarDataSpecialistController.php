@@ -64,8 +64,6 @@ class CarDataSpecialistController extends AbstractController
     {
         $form = $this->formFactory->create(ChoicesBrandType::class);
 
-        $comments = $this->specialistCommentRepository->getSpecialistComment();
-
         $form->handleRequest($request);
         if ($form->isSubmitted())
         {
@@ -74,7 +72,6 @@ class CarDataSpecialistController extends AbstractController
         }
         return $this->render('/car_data_specialist/index.html.twig',[
             'form' => $form->createView(),
-            'comments' => $comments
         ]);
     }
 

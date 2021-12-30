@@ -15,6 +15,7 @@ use App\Entity\Generation;
 use App\Entity\Model;
 use App\Entity\Newses;
 use App\Entity\Post;
+use App\Entity\ResetPasswordRequest;
 use App\Entity\SalesOffers;
 use App\Entity\SpecialistComment;
 use App\Entity\User;
@@ -55,6 +56,7 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::section('Users');
         yield MenuItem::linkToCrud('Gender', 'fas fa-venus-mars', Gender::class);
         yield MenuItem::linkToCrud('User', 'fas fa-users', User::class);
+        yield MenuItem::linkToCrud('User', 'fas fa-key', ResetPasswordRequest::class);
         yield MenuItem::section('Car Components',);
         yield MenuItem::linkToCrud('Brand', 'fas fa-trademark', Brand::class);
         yield MenuItem::linkToCrud('Model', 'fas fa-car-alt', Model::class);

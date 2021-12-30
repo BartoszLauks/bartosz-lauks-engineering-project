@@ -82,14 +82,20 @@ class CarSelesOffersController extends AbstractController
     public function choosingBrand(Request $request): Response
     {
         $form = $this->formFactory->create(ChoicesBrandType::class);
-
         $form->handleRequest($request);
+
+        $offers = $this->offersRepository->getOffers();
+
         if ($form->isSubmitted())
         {
             $brand = $form->getData()['brand'];
             return $this->redirect($request->getUri().$brand->getName());
         }
-        return $this->render('/car_seles_offers/index.html.twig',['form' => $form->createView()]);
+        return $this->render('/car_seles_offers/index.html.twig',[
+            'form' => $form->createView(),
+            'offers' => $offers
+
+        ]);
     }
 
     #[Route('/{brand}/', name: 'car_seles_offers_model')]
@@ -219,7 +225,7 @@ class CarSelesOffersController extends AbstractController
     #[ParamConverter('generation', options: ['mapping' => ['generation' => 'name']])]
     #[ParamConverter('body', options: ['mapping' => ['body' => 'name']])]
     #[ParamConverter('engine', options: ['mapping' => ['engine' => 'name']])]
-    public function allComponents(Request $request,Brand $brand,Model $model,Generation $generation,CarBody $body, Engine $engine)
+    public function allComponents(Request $request,Brand $brand,Model $model,Generation $generation,CarBody $body, Engine $engine): Response
     {
         $components = $this->engineRepository->checkCarExist($brand,$model,$generation,$body,$engine);
         if (empty($components))
@@ -245,7 +251,7 @@ class CarSelesOffersController extends AbstractController
     #[ParamConverter('generation', options: ['mapping' => ['generation' => 'name']])]
     #[ParamConverter('body', options: ['mapping' => ['body' => 'name']])]
     #[ParamConverter('engine', options: ['mapping' => ['engine' => 'name']])]
-    public function newOffert(Request $request,Brand $brand,Model $model,Generation $generation,CarBody $body, Engine $engine)
+    public function newOffert(Request $request,Brand $brand,Model $model,Generation $generation,CarBody $body, Engine $engine): RedirectResponse|Response
     {
         $components = $this->engineRepository->checkCarExist($brand,$model,$generation,$body,$engine);
         if (empty($components))
@@ -297,14 +303,14 @@ class CarSelesOffersController extends AbstractController
         ]);
     }
 
-    #[Route('/{brand}/{model}/{generation}/{body}/{engine}/show/{offer}', name: 'car_seles_offers_show')]
+    #[Route('/{brand}/{model}/{generation}/{body}/{engine}/offer/{offer}/show', name: 'car_seles_offers_show')]
     #[ParamConverter('brand', options: ['mapping' => ['brand' => 'name']])]
     #[ParamConverter('model', options: ['mapping' => ['model' => 'name']])]
     #[ParamConverter('generation', options: ['mapping' => ['generation' => 'name']])]
     #[ParamConverter('body', options: ['mapping' => ['body' => 'name']])]
     #[ParamConverter('engine', options: ['mapping' => ['engine' => 'name']])]
     #[ParamConverter('offer')]
-    public function show(Request $request,Brand $brand,Model $model,Generation $generation,CarBody $body, Engine $engine, SalesOffers $offer)
+    public function show(Request $request,Brand $brand,Model $model,Generation $generation,CarBody $body, Engine $engine, SalesOffers $offer): Response
     {
         return $this->render('/car_seles_offers/show.html.twig',[
             'brand' => $brand,
@@ -315,8 +321,50 @@ class CarSelesOffersController extends AbstractController
             'offer' => $offer
         ]);
     }
-    public function remove()
+    #[Route('/{brand}/{model}/{generation}/{body}/{engine}/offer/{offer}/remove', name: 'car_seles_offers_remove')]
+    #[ParamConverter('brand', options: ['mapping' => ['brand' => 'name']])]
+    #[ParamConverter('model', options: ['mapping' => ['model' => 'name']])]
+    #[ParamConverter('generation', options: ['mapping' => ['generation' => 'name']])]
+    #[ParamConverter('body', options: ['mapping' => ['body' => 'name']])]
+    #[ParamConverter('engine', options: ['mapping' => ['engine' => 'name']])]
+    #[ParamConverter('offer')]
+    public function remove(Brand $brand,Model $model,Generation $generation,CarBody $body, Engine $engine, SalesOffers $offer): RedirectResponse
     {
+        if ($this->security->getUser() !== $offer->getUser())
+        {
+            $this->addFlash('danger',"Access denied. This is not your offer");
 
+            return $this->redirect($this->generateUrl('car_seles_offers_all',[
+                'brand' => $brand,
+                'model' => $model,
+                'generation' => $generation,
+                'body' => $body,
+                'engine' => $engine,
+                'offer' => $offer
+            ]));
+        }
+
+        $this->entityManager->remove($offer);
+        $this->entityManager->flush();
+
+        $this->addFlash('success',"Your post was remove");
+
+        return $this->redirect($this->generateUrl('car_seles_offers_all',[
+            'brand' => $brand,
+            'model' => $model,
+            'generation' => $generation,
+            'body' => $body,
+            'engine' => $engine,
+            'offer' => $offer
+        ]));
+    }
+    #[Route('-user/', name: 'car_seles_offers_user')]
+    public function userOffers()
+    {
+        $offers = $this->offersRepository->getUserOffers();
+
+        return $this->render('/car_seles_offers/userOffers.html.twig',[
+            'offers' => $offers
+        ]);
     }
 }

@@ -93,13 +93,17 @@ class BlogController extends AbstractController
         $form = $this->formFactory->create(ChoicesBrandType::class);
 
         $form->handleRequest($request);
+
+        $posts = $this->postRepository->getPosts();
         if ($form->isSubmitted())
         {
             $brand = $form->getData()['brand'];
             return $this->redirect($request->getUri().$brand->getName());
         }
         return $this->render('/blog/index.html.twig',[
-            'form' => $form->createView()]);
+            'form' => $form->createView(),
+            'posts' => $posts
+        ]);
     }
 
     #[Route('/{brand}/', name: 'blog_model')]
