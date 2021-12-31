@@ -1,20 +1,21 @@
-<!DOCTYPE html>
+{% extends 'Header.html.twig' %}
 
-<title>Hello NewCarsController!</title>
+{% block title %}New Cars{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
-
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
-
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code><a href="{{ '/app/src/Controller/NewCarsController.php'|file_link(0) }}">src/Controller/NewCarsController.php</a></code></li>
-        <li>Your template at <code><a href="{{ '/app/templates/new_cars/index.html.twig'|file_link(0) }}">templates/new_cars/index.html.twig</a></code></li>
-    </ul>
-</div>
+    {% if generations|default %}
+        {% for generation in generations %}
+            <a href="{{ path('new_cars_now_engine', { body : generation.carBodies }) }}" style="color: black">
+                <div class="card">
+                    <div class="card-body">
+                        <img class="card-img-top" src="/uploads/offers/{{ generation.file }}" alt="Card image cap" style="max-width: 300px;max-height: 300px">
+                        <br>
+                        <br>
+                        <h4 class="card-title">{{ generation.producedFrom }} {% if producedUntil != 0 %} {{ generation.producedUntil }} {% endif %}</h4>
+                        <h5 class="card-title">{{ generation.description }}</h5>
+                    </div>
+                </div>
+            </a>
+        {% endfor %}
+    {% endif %}
 {% endblock %}

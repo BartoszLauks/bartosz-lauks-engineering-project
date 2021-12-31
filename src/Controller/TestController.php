@@ -7,6 +7,7 @@ use App\Repository\AdvertisingRepository;
 use App\Repository\BrandRepository;
 use App\Repository\CarBodyRepository;
 use App\Repository\EngineRepository;
+use App\Repository\GenerationRepository;
 use App\Repository\ModelRepository;
 use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -31,7 +32,7 @@ class TestController extends AbstractController
     private $engineRepository;
     private $carBodyRepository;
     private $advertisingRepository;
-
+    private $generationRepository;
 
     public function __construct
     (
@@ -43,7 +44,8 @@ class TestController extends AbstractController
         ModelRepository $modelRepository,
         CarBodyRepository $carBodyRepository,
         EngineRepository $engineRepository,
-        AdvertisingRepository $advertisingRepository
+        AdvertisingRepository $advertisingRepository,
+        GenerationRepository $generationRepository
     ) {
         $this->mailer = $mailer;
         $this->security = $security;
@@ -54,6 +56,7 @@ class TestController extends AbstractController
         $this->engineRepository = $engineRepository;
         $this->carBodyRepository = $carBodyRepository;
         $this->advertisingRepository = $advertisingRepository;
+        $this->generationRepository = $generationRepository;
     }
 
     #[Route('/email', name: 'test')]
@@ -111,7 +114,7 @@ class TestController extends AbstractController
     public function ormtest()
     {
         //dd($this->engineRepository->findByCarBody(5));
-        dd($this->advertisingRepository->getActiveAdvertising(new \DateTime()));
+        dd($this->generationRepository->getNewGenerations());
         //$val = $this->carBodyRepository->findOneBy(['id' => 4]);
         //dd($val);
         //dd($this->engineRepository->findBy(['body' => $val]));

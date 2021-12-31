@@ -23,6 +23,11 @@ class EngineRepository extends ServiceEntityRepository
         parent::__construct($registry, Engine::class);
     }
 
+    public function getNewCarWithGeneration()
+    {
+
+    }
+
     public function getEngineWithCarBodyGenerationBrandModelRelation(Brand $brand, Model $model, Generation $generation,CarBody $body)
     {
         return $this->createQueryBuilder('e')

@@ -8,9 +8,11 @@
 /public/uploads/advertising/*
 /public/uploads/newses/*
 /public/uploads/offers/*
+/public/uploads/generation/*
 !public/uploads/advertising/default.png
 !public/uploads/newses/default.png
 !public/uploads/offers/default.png
+!public/uploads/generation/default.png
 /var/
 /vendor/
 ###< symfony/framework-bundle ###

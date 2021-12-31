@@ -7,7 +7,6 @@ use App\Entity\CarBody;
 use App\Entity\Engine;
 use App\Entity\Generation;
 use App\Entity\Model;
-use App\Entity\SpecialistComment;
 use App\Form\ChoicesBodyType;
 use App\Form\ChoicesBrandType;
 use App\Form\ChoicesEngineType;

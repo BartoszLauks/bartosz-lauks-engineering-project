@@ -6,6 +6,8 @@ use App\Repository\GenerationRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=GenerationRepository::class)
@@ -21,6 +23,8 @@ class Generation
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank()
+     * @Groups({"new_car"})
      */
     private $name;
 
@@ -31,16 +35,19 @@ class Generation
 
     /**
      * @ORM\OneToMany(targetEntity=CarBody::class, mappedBy="generation")
+     * @Assert\NotBlank()
      */
     private $carBodies;
 
     /**
      * @ORM\ManyToOne(targetEntity=Model::class, inversedBy="generations")
+     * @Assert\NotBlank()
      */
     private $model;
 
     /**
      * @ORM\OneToMany(targetEntity=SalesOffers::class, mappedBy="generation")
+     * @Assert\NotBlank()
      */
     private $salesOffers;
 
@@ -53,6 +60,31 @@ class Generation
      * @ORM\OneToMany(targetEntity=SpecialistComment::class, mappedBy="generation")
      */
     private $specialistComments;
+
+    /**
+     * @ORM\Column(type="integer")
+     * @Assert\NotBlank()
+     * @Groups({"new_car"})
+     */
+    private $producedFrom;
+
+    /**
+     * @ORM\Column(type="integer")
+     * @Assert\NotBlank()
+     * @Groups({"new_car"})
+     */
+    private $producedUntil;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Assert\Regex(
+     *     pattern="/^.*\.(jpg|jpeg|png|gif)$/i",
+     *     match=true,
+     *     message="You cannot add a file other than a photo"
+     * )
+     * @Groups({"new_car"})
+     */
+    private $file;
 
     public function __construct()
     {
@@ -224,6 +256,42 @@ class Generation
                 $specialistComment->setGeneration(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getProducedFrom(): ?int
+    {
+        return $this->producedFrom;
+    }
+
+    public function setProducedFrom(int $producedFrom): self
+    {
+        $this->producedFrom = $producedFrom;
+
+        return $this;
+    }
+
+    public function getProducedUntil(): ?int
+    {
+        return $this->producedUntil;
+    }
+
+    public function setProducedUntil(int $producedUntil): self
+    {
+        $this->producedUntil = $producedUntil;
+
+        return $this;
+    }
+
+    public function getFile(): ?string
+    {
+        return $this->file;
+    }
+
+    public function setFile(?string $file): self
+    {
+        $this->file = $file;
 
         return $this;
     }

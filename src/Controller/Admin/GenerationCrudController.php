@@ -6,8 +6,12 @@ use App\Entity\Generation;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\ImageField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use EasyCorp\Bundle\EasyAdminBundle\Form\Type\FileUploadType;
 
 class GenerationCrudController extends AbstractCrudController
 {
@@ -23,7 +27,15 @@ class GenerationCrudController extends AbstractCrudController
             TextField::new('name'),
             TextEditorField::new('description'),
             AssociationField::new('carBodies'),
-            AssociationField::new('model')
+            AssociationField::new('model'),
+            ImageField::new('file')
+                ->setLabel("Image")
+                ->setBasePath('uploads/generation/')
+                ->setUploadDir('public/uploads/generation')
+                ->setFormType(FileUploadType::class)
+                ->setUploadedFileNamePattern('[randomhash].[extension]'),
+            IntegerField::new('producedFrom'),
+            IntegerField::new('producedUntil')
         ];
     }
 }

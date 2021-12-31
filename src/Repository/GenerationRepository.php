@@ -21,6 +21,30 @@ class GenerationRepository extends ServiceEntityRepository
         parent::__construct($registry, Generation::class);
     }
 
+    public function getNewGenerationsYearAgo()
+    {
+        $date = date('Y')-1;
+
+        return $this->createQueryBuilder('g')
+            ->where('g.producedFrom = :year')
+            ->setParameter('year',$date)
+            ->getQuery()
+            ->getResult()
+            ;
+    }
+
+    public function getNewGenerations()
+    {
+        $date = date('Y');
+
+        return $this->createQueryBuilder('g')
+            ->where('g.producedFrom = :year')
+            ->setParameter('year',$date)
+            ->getQuery()
+            ->getResult()
+            ;
+    }
+
     public function getGenerationWithBrandModelRelation(Brand $brand, Model $model)
     {
         return $this->createQueryBuilder('g')
