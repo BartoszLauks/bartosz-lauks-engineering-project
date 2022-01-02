@@ -33,7 +33,7 @@
                         Price :
                     </td>
                     <td>
-                        {{ offer.price }} $
+                        {{ offer.price|number_format(2, '.', ',') }} $
                     </td>
                 </tr>
                 <tr>
@@ -41,7 +41,7 @@
                         Mileage :
                     </td>
                     <td>
-                        {{ offer.mileage }} km
+                        {{ offer.mileage|number_format(0, '.') }} km
                     </td>
                 </tr>
                 <tr>

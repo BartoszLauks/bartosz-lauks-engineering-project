@@ -6,6 +6,8 @@ use App\Controller\CarDataSpecialistController;
 use App\Entity\Advertising;
 use App\Entity\Brand;
 use App\Entity\CarBody;
+use App\Entity\CarBodyProperty;
+use App\Entity\CarBodyValue;
 use App\Entity\Comment;
 use App\Entity\Engine;
 use App\Entity\EngineProperty;
@@ -65,10 +67,10 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToCrud('Engine', 'fas fa-cogs', Engine::class);
         yield MenuItem::section('Components Value');
         yield MenuItem::linkToCrud('Engine Value', 'fas fa-cogs', EngineValue::class);
-        yield MenuItem::linkToCrud('Car Body Value', 'fas fa-car-side', EngineValue::class);
+        yield MenuItem::linkToCrud('Car Body Value', 'fas fa-car-side', CarBodyValue::class);
         yield MenuItem::section('Components Property');
         yield MenuItem::linkToCrud('Engine Property', 'fas fa-cogs', EngineProperty::class);
-        yield MenuItem::linkToCrud('Car Body Property', 'fas fa-car-side', EngineProperty::class);
+        yield MenuItem::linkToCrud('Car Body Property', 'fas fa-car-side', CarBodyProperty::class);
 
 
 

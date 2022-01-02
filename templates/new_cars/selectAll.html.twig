@@ -1,0 +1,24 @@
+{% extends 'Header.html.twig' %}
+
+{% block title %}New Cars{% endblock %}
+
+{% block body %}
+    <div class="center-bar">
+        <h3>Selected new car</h3>
+    </div>
+    <br>
+    <div class="center">
+        <img class="card-img-top" src="/uploads/generation/{{ generation.file }}" alt="Card image cap" style="max-width: 300px;max-height: 300px">
+        <hr>
+        <h5 class="card-title">Brand : {{ brand.name }}</h5>
+        <hr>
+        <h5 class="card-title">Model : {{ model.name }}</h5>
+        <hr>
+        <h5 class="card-title">Generation : {{ generation.name }}</h5>
+        <h6 class="card-title">Produced : {{ generation.producedFrom}} - {% if generation.producedUntil != 0 %} {{ generation.producedUntil }} {% endif %}</h6>
+        <hr>
+        <h5 class="card-title">Body car : {{ body.name }}</h5>
+        <hr>
+        <h5 class="card-title">Engine : {{ engine.name }}</h5>
+    </div>
+{% endblock %}

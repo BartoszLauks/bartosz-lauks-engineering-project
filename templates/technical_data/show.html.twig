@@ -1,0 +1,77 @@
+{% extends 'Header.html.twig' %}
+
+{% block title %}Technical data{% endblock %}
+
+{% block body %}
+    {{ dump() }}
+    <a href="{{ path('technical_data_brand') }}">| Select |</a>
+    {% if brand|default %}
+        <a href="{{ path('technical_data_model', { brand : brand}) }}">| {{ brand }} |</a>
+        {% if model|default %}
+            <a href="{{ path('technical_data_generation', { brand : brand, model : model}) }}">| {{ model }} |</a>
+            {% if generation|default %}
+                <a href="{{ path('technical_data_body', { brand : brand, model : model, generation : generation}) }}">| {{ generation }} |</a>
+                {% if body|default %}
+                    <a href="{{ path('technical_data_engine', { brand : brand, model : model, generation : generation, body : body}) }}">| {{ body }} |</a>
+                    {% if engine|default %}
+                        <a href="{{ path('technical_data_all', { brand : brand, model : model, generation : generation, body : body, engine : engine}) }}">| {{ engine }} |</a>
+                    {% endif %}
+                {% endif %}
+            {% endif %}
+        {% endif %}
+    {% endif %}
+    <hr>
+    <div class="center">
+        {% if brand|default %}
+            <h5 class="card-title">Brand : {{ brand.name }}</h5>
+            <hr>
+        {% endif %}
+        {% if model|default %}
+            <h5 class="card-title">Model : {{ model.name }}</h5>
+            <hr>
+        {% endif %}
+        {% if generation|default %}
+            <h5 class="card-title">Generation : {{ generation.name }}</h5>
+            <h6 class="card-title">Produced : {{ generation.producedFrom}} - {% if generation.producedUntil != 0 %} {{ generation.producedUntil }} {% endif %}</h6>
+            <hr>
+        {% endif %}
+        {% if body|default %}
+            <h5 class="card-title">Body car : {{ body.name }}</h5>
+            <table class="table table-striped">
+                <tbody>
+                {% for body in bodyValues %}
+                    <tr>
+                        <td>
+                            {{ body.property.property }}
+                        </td>
+                        <td>
+                            {{ body.value }}
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            <hr>
+        {% endif %}
+        {% if engine|default %}
+            <h5 class="card-title">Engine : {{ engine.name }}</h5>
+            <table class="table table-striped">
+                <tbody>
+                {% for engine in engineValues %}
+                    <tr>
+                        <td>
+                            {{ engine.property.property }}
+                        </td>
+                        <td>
+                            {{ engine.value }}
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            <hr>
+        {% endif %}
+    </div>
+
+
+{% endblock %}

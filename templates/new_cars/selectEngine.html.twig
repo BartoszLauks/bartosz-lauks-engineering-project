@@ -1,0 +1,28 @@
+{% extends 'Header.html.twig' %}
+
+{% block title %}New Cars{% endblock %}
+
+{% block body %}
+    {% if engines|default %}
+        <div class="center-bar-post">
+            <h4>Select new car body</h4>
+        </div>
+        {% for engine in engines %}
+            {% if now|default %}
+            <a href="{{ path('new_cars_now_all', { generation : generation, body : body, engine : engine.name}) }}" style="color: black">
+            {% else %}
+                <a href="{{ path('new_cars_year_ago_all', { generation : generation, body : body, engine : engine.name}) }}" style="color: black">
+            {% endif %}
+                <div class="card">
+                    <div class="card-body">
+                        <h3 class="card-title">{{ engine.name }}</h3>
+                    </div>
+                </div>
+            </a>
+        {% endfor %}
+    {% else %}
+        <div class="center-bar-warning">
+            <h4>There are no new cars for this year</h4>
+        </div>
+    {% endif %}
+{% endblock %}

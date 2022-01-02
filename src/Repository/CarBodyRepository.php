@@ -22,6 +22,17 @@ class CarBodyRepository extends ServiceEntityRepository
         parent::__construct($registry, CarBody::class);
     }
 
+    public function getNewCarBodyByGeneration(Generation $generation)
+    {
+        return $this->createQueryBuilder('cb')
+            ->join('cb.generation','g','cb.id = g.carBodies')
+            ->where('g = :generation')
+            ->setParameter('generation',$generation)
+            ->getQuery()
+            ->getResult()
+            ;
+    }
+
     public function getCarBodyWithGenerationModelBrandRelation(Brand $brand, Model $model, Generation $generation)
     {
         return $this->createQueryBuilder('cb')

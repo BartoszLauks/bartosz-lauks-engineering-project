@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Brand;
 use App\Entity\CarBody;
+use App\Entity\CarBodyValue;
 use App\Entity\Engine;
 use App\Entity\Generation;
 use App\Entity\Model;
@@ -14,7 +15,9 @@ use App\Form\ChoicesGenerationType;
 use App\Form\ChoicesModelType;
 use App\Repository\BrandRepository;
 use App\Repository\CarBodyRepository;
+use App\Repository\CarBodyValueRepository;
 use App\Repository\EngineRepository;
+use App\Repository\EngineValueRepository;
 use App\Repository\GenerationRepository;
 use App\Repository\ModelRepository;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
@@ -37,6 +40,8 @@ class TechnicalDataController extends AbstractController
     private $generationRepository;
     private $carBodyRepository;
     private $engineRepository;
+    private $carBodyValueRepository;
+    private $engineValueRepository;
 
     public function __construct(
         FormFactoryInterface $formFactory,
@@ -45,7 +50,8 @@ class TechnicalDataController extends AbstractController
         GenerationRepository $generationRepository,
         CarBodyRepository $carBodyRepository,
         EngineRepository $engineRepository,
-
+        CarBodyValueRepository $carBodyValueRepository,
+        EngineValueRepository $engineValueRepository
 
     ) {
         $this->formFactory = $formFactory;
@@ -54,6 +60,8 @@ class TechnicalDataController extends AbstractController
         $this->generationRepository = $generationRepository;
         $this->carBodyRepository = $carBodyRepository;
         $this->engineRepository = $engineRepository;
+        $this->carBodyValueRepository = $carBodyValueRepository;
+        $this->engineValueRepository = $engineValueRepository;
     }
 
     #[Route('/', name: 'technical_data_brand')]
@@ -193,6 +201,18 @@ class TechnicalDataController extends AbstractController
         {
             throw new NotFoundHttpException();
         }
-        return $this->redirect($this->generateUrl('app_home'));
+
+        $bodyValue = $this->carBodyValueRepository->findBy(['carBody' => $body]);
+        $engineValue = $this->engineValueRepository->findBy(['engine' => $engine]);
+
+        return $this->render('/technical_data/show.html.twig',[
+            'brand' => $brand,
+            'model' => $model,
+            'generation' => $generation,
+            'body' => $body,
+            'engine' => $engine,
+            'bodyValues' => $bodyValue,
+            'engineValues' => $engineValue
+        ]);
     }
 }

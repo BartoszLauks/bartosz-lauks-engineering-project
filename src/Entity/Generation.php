@@ -64,6 +64,7 @@ class Generation
     /**
      * @ORM\Column(type="integer")
      * @Assert\NotBlank()
+     * @Assert\PositiveOrZero()
      * @Groups({"new_car"})
      */
     private $producedFrom;
@@ -71,6 +72,7 @@ class Generation
     /**
      * @ORM\Column(type="integer")
      * @Assert\NotBlank()
+     * @Assert\PositiveOrZero()
      * @Groups({"new_car"})
      */
     private $producedUntil;

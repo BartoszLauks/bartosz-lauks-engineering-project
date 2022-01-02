@@ -1,0 +1,32 @@
+{% extends 'Header.html.twig' %}
+
+{% block title %}New Cars{% endblock %}
+
+{% block body %}
+    {% if generations|default %}
+        <div class="center-bar-post">
+            <h4>Select new car generations</h4>
+        </div>
+        {% for generation in generations %}
+            {% if now|default %}
+                <a href="{{ path('new_cars_now_body', { generation : generation.name}) }}" style="color: black">
+            {% else %}
+                <a href="{{ path('new_cars_year_ago_body', { generation : generation.name}) }}" style="color: black">
+            {% endif %}
+                <div class="card">
+                    <div class="card-body">
+                        <img class="card-img-top" src="/uploads/generation/{{ generation.file }}" alt="Card image cap" style="max-width: 300px;max-height: 300px">
+                        <br>
+                        <br>
+                        <h3 class="card-title">{{ generation.name }}</h3>
+                        <h4 class="card-title">Product at : {{ generation.producedFrom }} - {% if generation.producedUntil != 0 %} {{ generation.producedUntil }} {% endif %}</h4>
+                    </div>
+                </div>
+            </a>
+        {% endfor %}
+    {% else %}
+        <div class="center-bar-warning">
+            <h4>There are no new cars for this year</h4>
+        </div>
+    {% endif %}
+{% endblock %}

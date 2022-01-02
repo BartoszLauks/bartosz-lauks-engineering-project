@@ -7,6 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity(repositoryClass=CarBodyValueRepository::class)
+ * @ORM\HasLifecycleCallbacks()
  */
 class CarBodyValue
 {
@@ -88,5 +89,13 @@ class CarBodyValue
         $this->property = $property;
 
         return $this;
+    }
+
+    /**
+     * @ORM\PrePersist
+     */
+    public function setCreatedAtValue()
+    {
+        $this->createdAt = new \DateTime();
     }
 }
