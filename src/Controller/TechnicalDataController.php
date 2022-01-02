@@ -4,7 +4,6 @@ namespace App\Controller;
 
 use App\Entity\Brand;
 use App\Entity\CarBody;
-use App\Entity\CarBodyValue;
 use App\Entity\Engine;
 use App\Entity\Generation;
 use App\Entity\Model;
@@ -13,7 +12,6 @@ use App\Form\ChoicesBrandType;
 use App\Form\ChoicesEngineType;
 use App\Form\ChoicesGenerationType;
 use App\Form\ChoicesModelType;
-use App\Repository\BrandRepository;
 use App\Repository\CarBodyRepository;
 use App\Repository\CarBodyValueRepository;
 use App\Repository\EngineRepository;
@@ -34,18 +32,16 @@ use Symfony\Component\Routing\Annotation\Route;
 #[IsGranted('IS_AUTHENTICATED_REMEMBERED')]
 class TechnicalDataController extends AbstractController
 {
-    private $formFactory;
-    private $brandRepository;
-    private $modelRepository;
-    private $generationRepository;
-    private $carBodyRepository;
-    private $engineRepository;
-    private $carBodyValueRepository;
-    private $engineValueRepository;
+    private FormFactoryInterface $formFactory;
+    private ModelRepository $modelRepository;
+    private GenerationRepository $generationRepository;
+    private CarBodyRepository $carBodyRepository;
+    private EngineRepository $engineRepository;
+    private CarBodyValueRepository $carBodyValueRepository;
+    private EngineValueRepository $engineValueRepository;
 
     public function __construct(
         FormFactoryInterface $formFactory,
-        BrandRepository $brandRepository,
         ModelRepository $modelRepository,
         GenerationRepository $generationRepository,
         CarBodyRepository $carBodyRepository,
@@ -55,7 +51,6 @@ class TechnicalDataController extends AbstractController
 
     ) {
         $this->formFactory = $formFactory;
-        $this->brandRepository = $brandRepository;
         $this->modelRepository = $modelRepository;
         $this->generationRepository = $generationRepository;
         $this->carBodyRepository = $carBodyRepository;
@@ -194,7 +189,7 @@ class TechnicalDataController extends AbstractController
     #[ParamConverter('generation', options: ['mapping' => ['generation' => 'name']])]
     #[ParamConverter('body', options: ['mapping' => ['body' => 'name']])]
     #[ParamConverter('engine', options: ['mapping' => ['engine' => 'name']])]
-    public function allComponents(Request $request,Brand $brand,Model $model,Generation $generation,CarBody $body, Engine $engine)
+    public function allComponents(Brand $brand,Model $model,Generation $generation,CarBody $body, Engine $engine): Response
     {
         $components = $this->engineRepository->checkCarExist($brand,$model,$generation,$body,$engine);
         if (empty($components))

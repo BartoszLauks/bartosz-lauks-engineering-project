@@ -9,7 +9,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class HomeController extends AbstractController
 {
-    private $newsesRepository;
+    private NewsesRepository $newsesRepository;
 
     public function __construct(
         NewsesRepository $newsesRepository

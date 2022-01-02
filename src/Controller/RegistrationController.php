@@ -38,7 +38,6 @@ class RegistrationController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // encode the plain password
             $user->setPassword(
             $userPasswordHasher->hashPassword(
                     $user,
@@ -49,7 +48,6 @@ class RegistrationController extends AbstractController
             $entityManager->persist($user);
             $entityManager->flush();
 
-            // generate a signed url and email it to the user
             $this->emailVerifier->sendEmailConfirmation('app_verify_email', $user,
                 (new TemplatedEmail())
                     ->from(new Address('bartoszlauks@gmail.com', 'EverythingAboutCars'))
@@ -74,12 +72,14 @@ class RegistrationController extends AbstractController
         $id = $request->get('id');
 
         if (null === $id) {
-            return $this->redirectToRoute('app_register');
+            $this->addFlash('danger',"Something was wrong, restart verification mail");
+            return $this->redirectToRoute('app_home');
         }
 
         $user = $userRepository->find($id);
 
         if (null === $user) {
+            $this->addFlash('danger',"Something was wrong, create account again");
             return $this->redirectToRoute('app_register');
         }
 
@@ -89,9 +89,8 @@ class RegistrationController extends AbstractController
         } catch (VerifyEmailExceptionInterface $exception) {
             $this->addFlash('verify_email_error', $exception->getReason());
 
-            $this->addFlash('danger','Something went wrong');
-
-            return $this->redirectToRoute('app_register');
+            $this->addFlash('danger',"Something was wrong, restart verification mail");
+            return $this->redirectToRoute('app_home');
         }
 
         $this->addFlash('success', 'Your email address has been verified.');

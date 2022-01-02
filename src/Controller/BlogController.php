@@ -15,20 +15,17 @@ use App\Form\ChoicesEngineType;
 use App\Form\ChoicesGenerationType;
 use App\Form\ChoicesModelType;
 use App\Form\PostType;
-use App\Repository\BrandRepository;
 use App\Repository\CarBodyRepository;
 use App\Repository\CommentRepository;
 use App\Repository\EngineRepository;
 use App\Repository\GenerationRepository;
 use App\Repository\ModelRepository;
 use App\Repository\PostRepository;
-use App\Repository\SalesOffersRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -42,47 +39,38 @@ use Symfony\Component\Security\Core\Security;
 #[IsGranted('IS_AUTHENTICATED_REMEMBERED')]
 class BlogController extends AbstractController
 {
-    private $formFactory;
-    private $brandRepository;
-    private $modelRepository;
-    private $generationRepository;
-    private $carBodyRepository;
-    private $engineRepository;
-    private $parameterBag;
-    private $security;
-    private $userRepository;
-    private $entityManager;
-    private $offersRepository;
-    private $postRepository;
-    private $commentRepository;
+    private FormFactoryInterface $formFactory;
+    private ModelRepository $modelRepository;
+    private GenerationRepository $generationRepository;
+    private CarBodyRepository $carBodyRepository;
+    private EngineRepository $engineRepository;
+    private Security $security;
+    private UserRepository $userRepository;
+    private EntityManagerInterface $entityManager;
+    private PostRepository $postRepository;
+    private CommentRepository $commentRepository;
 
 
     public function __construct(
         FormFactoryInterface $formFactory,
-        BrandRepository $brandRepository,
         ModelRepository $modelRepository,
         GenerationRepository $generationRepository,
         CarBodyRepository $carBodyRepository,
         EngineRepository $engineRepository,
-        ParameterBagInterface $parameterBag,
         Security $security,
         UserRepository $userRepository,
         EntityManagerInterface $entityManager,
-        SalesOffersRepository $offersRepository,
         PostRepository $postRepository,
         CommentRepository $commentRepository
     ) {
         $this->formFactory = $formFactory;
-        $this->brandRepository = $brandRepository;
         $this->modelRepository = $modelRepository;
         $this->generationRepository = $generationRepository;
         $this->carBodyRepository = $carBodyRepository;
         $this->engineRepository = $engineRepository;
-        $this->parameterBag = $parameterBag;
         $this->security = $security;
         $this->userRepository = $userRepository;
         $this->entityManager = $entityManager;
-        $this->offersRepository = $offersRepository;
         $this->postRepository = $postRepository;
         $this->commentRepository = $commentRepository;
     }
@@ -202,7 +190,6 @@ class BlogController extends AbstractController
     public function choosingEngine(Request $request,Brand $brand,Model $model,Generation $generation,CarBody $body): RedirectResponse|Response
     {
         $engine = $this->engineRepository->getEngineWithCarBodyGenerationBrandModelRelation($brand,$model,$generation,$body);
-        //dd($engine);
         if (empty($engine)) {
             throw new NotFoundHttpException();
         }
@@ -234,7 +221,7 @@ class BlogController extends AbstractController
     #[ParamConverter('generation', options: ['mapping' => ['generation' => 'name']])]
     #[ParamConverter('body', options: ['mapping' => ['body' => 'name']])]
     #[ParamConverter('engine', options: ['mapping' => ['engine' => 'name']])]
-    public function allComponents(Request $request,Brand $brand,Model $model,Generation $generation,CarBody $body, Engine $engine)
+    public function allComponents(Brand $brand,Model $model,Generation $generation,CarBody $body, Engine $engine): Response
     {
         $components = $this->engineRepository->checkCarExist($brand,$model,$generation,$body,$engine);
         if (empty($components))
@@ -261,7 +248,7 @@ class BlogController extends AbstractController
     #[ParamConverter('body', options: ['mapping' => ['body' => 'name']])]
     #[ParamConverter('engine', options: ['mapping' => ['engine' => 'name']])]
     #[ParamConverter('post')]
-    public function showBlogPost(Request $request,Brand $brand,Model $model,Generation $generation,CarBody $body, Engine $engine,Post $post)
+    public function showBlogPost(Brand $brand,Model $model,Generation $generation,CarBody $body, Engine $engine,Post $post): Response
     {
         $components = $this->engineRepository->checkCarExist($brand,$model,$generation,$body,$engine);
         if (empty($components))
@@ -287,7 +274,7 @@ class BlogController extends AbstractController
     #[ParamConverter('generation', options: ['mapping' => ['generation' => 'name']])]
     #[ParamConverter('body', options: ['mapping' => ['body' => 'name']])]
     #[ParamConverter('engine', options: ['mapping' => ['engine' => 'name']])]
-    public function newPost(Request $request,Brand $brand,Model $model,Generation $generation,CarBody $body, Engine $engine)
+    public function newPost(Request $request,Brand $brand,Model $model,Generation $generation,CarBody $body, Engine $engine): RedirectResponse|Response
     {
         $components = $this->engineRepository->checkCarExist($brand,$model,$generation,$body,$engine);
         if (empty($components))
@@ -341,7 +328,7 @@ class BlogController extends AbstractController
     #[ParamConverter('body', options: ['mapping' => ['body' => 'name']])]
     #[ParamConverter('engine', options: ['mapping' => ['engine' => 'name']])]
     #[ParamConverter('post')]
-    public function newComment(Request $request,Brand $brand,Model $model,Generation $generation,CarBody $body, Engine $engine, Post $post)
+    public function newComment(Request $request,Brand $brand,Model $model,Generation $generation,CarBody $body, Engine $engine, Post $post): JsonResponse
     {
         if (! $request->isXmlHttpRequest()) {
 
@@ -380,7 +367,7 @@ class BlogController extends AbstractController
     #[ParamConverter('body', options: ['mapping' => ['body' => 'name']])]
     #[ParamConverter('engine', options: ['mapping' => ['engine' => 'name']])]
     #[ParamConverter('post')]
-    public function removeComment(Request $request,Brand $brand,Model $model,Generation $generation,CarBody $body, Engine $engine, Post $post)
+    public function removeComment(Request $request,Brand $brand,Model $model,Generation $generation,CarBody $body, Engine $engine, Post $post): JsonResponse
     {
         if (! $request->isXmlHttpRequest()) {
 
@@ -408,7 +395,7 @@ class BlogController extends AbstractController
     }
 
     #[Route('-posts-user/', name: 'blog_user_post')]
-    public function userPosts()
+    public function userPosts(): Response
     {
         $posts = $this->postRepository->getPostsUser();
 
@@ -419,7 +406,7 @@ class BlogController extends AbstractController
 
     #[Route('-posts-user/post/{post}/remove', name: 'blog_user_post_remove')]
     #[ParamConverter('post')]
-    public function userPostRemove(Post $post)
+    public function userPostRemove(Post $post): RedirectResponse
     {
         if ($this->security->getUser() !== $post->getUser())
         {

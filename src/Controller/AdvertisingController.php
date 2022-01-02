@@ -5,11 +5,10 @@ namespace App\Controller;
 use App\Services\AdvertisingService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
 
 class AdvertisingController extends AbstractController
 {
-    private $advertisingService;
+    private AdvertisingService $advertisingService;
 
     public function __construct(
         AdvertisingService $advertisingService)

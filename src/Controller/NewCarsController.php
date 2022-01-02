@@ -13,47 +13,37 @@ use App\Repository\ModelRepository;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
+use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
-use Symfony\Component\Serializer\SerializerInterface;
 
 #[Route('/new-cars')]
 #[IsGranted('IS_AUTHENTICATED_REMEMBERED')]
 class NewCarsController extends AbstractController
 {
-    private $generationRepository;
-    private $carBodyRepository;
-    private $formFactory;
-    private $engineRepository;
-    private $serializerInterface;
-    private $normalizer;
-    private $denormalizer;
-    private $modelRepository;
-    private $brandRepository;
+    private GenerationRepository $generationRepository;
+    private CarBodyRepository $carBodyRepository;
+    private EngineRepository $engineRepository;
+    private NormalizerInterface $normalizer;
+    private ModelRepository $modelRepository;
+    private BrandRepository $brandRepository;
 
 
     public function __construct(
         GenerationRepository $generationRepository,
         CarBodyRepository $carBodyRepository,
-        FormFactoryInterface $formFactory,
         EngineRepository $engineRepository,
-        SerializerInterface $serializerInterface,
         NormalizerInterface $normalizer,
-        DenormalizerInterface $denormalizer,
         ModelRepository $modelRepository,
         BrandRepository $brandRepository
     ) {
         $this->generationRepository = $generationRepository;
         $this->carBodyRepository = $carBodyRepository;
-        $this->formFactory = $formFactory;
         $this->engineRepository = $engineRepository;
-        $this->serializerInterface = $serializerInterface;
         $this->normalizer = $normalizer;
-        $this->denormalizer = $denormalizer;
         $this->modelRepository = $modelRepository;
         $this->brandRepository = $brandRepository;
     }
@@ -63,11 +53,11 @@ class NewCarsController extends AbstractController
     {
         $generations = $this->generationRepository->getNewGenerations();
 
-        $array = $this->normalizer->normalize($generations,null,['groups' => ['new_car']]); // to array
-
-        //$json = $this->serializerInterface->serialize($generations,'json',['groups' => ['new_car']]);  // to json
-
-        //$obj = $this->denormalizer->denormalize($array[0],Generation::class); form array to object entity
+        try {
+            $array = $this->normalizer->normalize($generations, null, ['groups' => ['new_car']]);
+        } catch (ExceptionInterface) {
+            throw new HttpException(500,"Error");
+        }
 
         return $this->render('new_cars/selectGeneration.html.twig', [
             'generations' => $array,
@@ -139,11 +129,11 @@ class NewCarsController extends AbstractController
     {
         $generations = $this->generationRepository->getNewGenerationsYearAgo();
 
-        $array = $this->normalizer->normalize($generations,null,['groups' => ['new_car']]); // to array
-
-        //$json = $this->serializerInterface->serialize($generations,'json',['groups' => ['new_car']]);  // to json
-
-        //$obj = $this->denormalizer->denormalize($array[0],Generation::class); form array to object entity
+        try {
+            $array = $this->normalizer->normalize($generations, null, ['groups' => ['new_car']]);
+        } catch (ExceptionInterface) {
+            throw new HttpException(500,"Error");
+        }
 
         return $this->render('new_cars/selectGeneration.html.twig', [
             'generations' => $array

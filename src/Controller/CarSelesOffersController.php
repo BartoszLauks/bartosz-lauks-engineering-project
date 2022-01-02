@@ -14,7 +14,6 @@ use App\Form\ChoicesEngineType;
 use App\Form\ChoicesGenerationType;
 use App\Form\ChoicesModelType;
 use App\Form\NewOfferType;
-use App\Repository\BrandRepository;
 use App\Repository\CarBodyRepository;
 use App\Repository\EngineRepository;
 use App\Repository\GenerationRepository;
@@ -38,22 +37,20 @@ use Symfony\Component\Security\Core\Security;
 #[IsGranted('IS_AUTHENTICATED_REMEMBERED')]
 class CarSelesOffersController extends AbstractController
 {
-    private $formFactory;
-    private $brandRepository;
-    private $modelRepository;
-    private $generationRepository;
-    private $carBodyRepository;
-    private $engineRepository;
-    private $parameterBag;
-    private $security;
-    private $userRepository;
-    private $entityManager;
-    private $offersRepository;
+    private FormFactoryInterface $formFactory;
+    private ModelRepository $modelRepository;
+    private GenerationRepository $generationRepository;
+    private CarBodyRepository $carBodyRepository;
+    private EngineRepository $engineRepository;
+    private ParameterBagInterface $parameterBag;
+    private Security $security;
+    private UserRepository $userRepository;
+    private EntityManagerInterface $entityManager;
+    private SalesOffersRepository $offersRepository;
 
 
     public function __construct(
         FormFactoryInterface $formFactory,
-        BrandRepository $brandRepository,
         ModelRepository $modelRepository,
         GenerationRepository $generationRepository,
         CarBodyRepository $carBodyRepository,
@@ -65,7 +62,6 @@ class CarSelesOffersController extends AbstractController
         SalesOffersRepository $offersRepository
     ) {
         $this->formFactory = $formFactory;
-        $this->brandRepository = $brandRepository;
         $this->modelRepository = $modelRepository;
         $this->generationRepository = $generationRepository;
         $this->carBodyRepository = $carBodyRepository;
@@ -224,7 +220,7 @@ class CarSelesOffersController extends AbstractController
     #[ParamConverter('generation', options: ['mapping' => ['generation' => 'name']])]
     #[ParamConverter('body', options: ['mapping' => ['body' => 'name']])]
     #[ParamConverter('engine', options: ['mapping' => ['engine' => 'name']])]
-    public function allComponents(Request $request,Brand $brand,Model $model,Generation $generation,CarBody $body, Engine $engine): Response
+    public function allComponents(Brand $brand,Model $model,Generation $generation,CarBody $body, Engine $engine): Response
     {
         $components = $this->engineRepository->checkCarExist($brand,$model,$generation,$body,$engine);
         if (empty($components))
@@ -273,6 +269,8 @@ class CarSelesOffersController extends AbstractController
             {
                 $filename = md5(uniqid()).".". $file->guessClientExtension();
                 $file->move($this->parameterBag->get('uploads_dir_offer'),$filename);
+
+                $offer->setFile($filename);
             }
 
             $offer->setBrand($brand);
@@ -280,7 +278,6 @@ class CarSelesOffersController extends AbstractController
             $offer->setGeneration($generation);
             $offer->setCarBody($body);
             $offer->setEngine($engine);
-            $offer->setFile($filename);
             $offer->setUser($this->userRepository->find($this->security->getUser()));
 
             $this->entityManager->persist($offer);
@@ -309,7 +306,7 @@ class CarSelesOffersController extends AbstractController
     #[ParamConverter('body', options: ['mapping' => ['body' => 'name']])]
     #[ParamConverter('engine', options: ['mapping' => ['engine' => 'name']])]
     #[ParamConverter('offer')]
-    public function showOffer(Request $request,Brand $brand,Model $model,Generation $generation,CarBody $body, Engine $engine, SalesOffers $offer): Response
+    public function showOffer(Brand $brand,Model $model,Generation $generation,CarBody $body, Engine $engine, SalesOffers $offer): Response
     {
         return $this->render('/car_seles_offers/show.html.twig',[
             'brand' => $brand,
@@ -359,7 +356,7 @@ class CarSelesOffersController extends AbstractController
     }
 
     #[Route('-user/', name: 'car_seles_offers_user')]
-    public function userOffers()
+    public function userOffers(): Response
     {
         $offers = $this->offersRepository->getUserOffers();
 
@@ -370,7 +367,7 @@ class CarSelesOffersController extends AbstractController
 
     #[Route('-user/offer/{offer}/remove', name: 'car_seles_offers_user_remove')]
     #[ParamConverter('offer')]
-    public function userOfferRemove(SalesOffers $offer)
+    public function userOfferRemove(SalesOffers $offer): RedirectResponse
     {
         if ($this->security->getUser() !== $offer->getUser())
         {
