@@ -3,6 +3,18 @@
 {% block title %}New Cars{% endblock %}
 
 {% block body %}
+    {{ dump() }}
+    {% if brand|default and model|default and generation|default and body|default and engine|default %}
+        <a href="{{ path('technical_data_all', { brand : brand, model : model, generation : generation, body : body, engine : engine}) }}">
+            Show technical data for this vehicle</a><br>
+        <a href="{{ path('blog_all', { brand : brand, model : model, generation : generation, body : body, engine : engine}) }}">
+            Find all posts on blog for this components</a><br>
+        <a href="{{ path('car_specialist_all', { brand : brand, model : model, generation : generation, body : body, engine : engine}) }}">
+            Find specialist comment for this components</a><br>
+        <a href="{{ path('car_seles_offers_all', { brand : brand, model : model, generation : generation, body : body, engine : engine}) }}">
+            Search cars offer for this car</a>
+    {% endif %}
+    <hr>
     <div class="center-bar">
         <h3>Selected new car</h3>
     </div>

@@ -14,6 +14,14 @@
                     <a href="{{ path('car_specialist_engine', { brand : brand, model : model, generation : generation, body : body}) }}">| {{ body }} |</a>
                     {% if engine|default %}
                         <a href="{{ path('car_specialist_all', { brand : brand, model : model, generation : generation, body : body, engine : engine}) }}">| {{ engine }} |</a>
+                        <hr>
+                        <a href="{{ path('blog_all', { brand : brand, model : model, generation : generation, body : body, engine : engine}) }}">
+                            Find all posts on blog for this components</a><br>
+                        <a href="{{ path('car_seles_offers_all', { brand : brand, model : model, generation : generation, body : body, engine : engine}) }}">
+                            Search cars offer for this car</a><br>
+                        <a href="{{ path('technical_data_all', { brand : brand, model : model, generation : generation, body : body, engine : engine}) }}">
+                            Show technical data for this vehicle</a>
+                        <hr>
                     {% endif %}
                 {% endif %}
             {% endif %}
