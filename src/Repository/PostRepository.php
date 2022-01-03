@@ -10,6 +10,7 @@ use App\Entity\Model;
 use App\Entity\Post;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use PhpParser\Node\Scalar\String_;
 use Symfony\Component\Security\Core\Security;
 
 /**
@@ -27,6 +28,19 @@ class PostRepository extends ServiceEntityRepository
         parent::__construct($registry, Post::class);
         $this->security = $security;
     }
+
+    public function searchPosts(string $str)
+    {
+        return $this->createQueryBuilder('p')
+            ->orderBy('p.createdAt','DESC')
+            ->where('LOWER(p.title) LIKE :str')
+            ->orWhere('LOWER(p.content) LIKE :str')
+            ->setParameter('str','%'.strtolower($str).'%')
+            ->getQuery()
+            ->getResult()
+            ;
+    }
+
 
     public function getPostsUser()
     {
