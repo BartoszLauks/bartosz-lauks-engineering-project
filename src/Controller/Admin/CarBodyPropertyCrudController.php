@@ -22,7 +22,7 @@ class CarBodyPropertyCrudController extends AbstractCrudController
             IdField::new('id')->hideOnForm(),
             TextField::new('property'),
             DateTimeField::new('createdAt')->hideOnForm(),
-            AssociationField::new('property')
+            AssociationField::new('carBodyValues')
         ];
     }
 }

@@ -24,9 +24,12 @@ use App\Entity\User;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
+#[IsGranted('IS_AUTHENTICATED_FULLY')]
+#[IsGranted('ROLE_ADMIN')]
 class DashboardController extends AbstractDashboardController
 {
     /**
@@ -45,32 +48,31 @@ class DashboardController extends AbstractDashboardController
 
     public function configureMenuItems(): iterable
     {
-        //yield MenuItem::linkToDashboard('Dashboard', 'fa fa-home');
         yield MenuItem::linkToRoute('WebSite', 'fas fa-globe', 'app_home');
         yield MenuItem::section('Website functionality');
-        yield MenuItem::linkToCrud('Advertising', 'fas fa-money-check-alt', Advertising::class);
-        yield MenuItem::linkToCrud('Newses', 'fas fa-newspaper', Newses::class);
-        yield MenuItem::linkToCrud('Sales offers', 'fas fa-hand-holding-usd', SalesOffers::class);
-        yield MenuItem::linkToCrud('Car data specialist', 'fas fa-user-graduate', SpecialistComment::class);
-        yield MenuItem::section('Blog');
-        yield MenuItem::linkToCrud('Posts', 'fas fa-comment-dots', Post::class);
-        yield MenuItem::linkToCrud('Comments', 'fas fa-comments', Comment::class);
-        yield MenuItem::section('Users');
-        yield MenuItem::linkToCrud('Gender', 'fas fa-venus-mars', Gender::class);
-        yield MenuItem::linkToCrud('User', 'fas fa-users', User::class);
-        yield MenuItem::linkToCrud('User', 'fas fa-key', ResetPasswordRequest::class);
-        yield MenuItem::section('Car Components',);
-        yield MenuItem::linkToCrud('Brand', 'fas fa-trademark', Brand::class);
-        yield MenuItem::linkToCrud('Model', 'fas fa-car-alt', Model::class);
-        yield MenuItem::linkToCrud('Generation','fas fa-car',Generation::class);
-        yield MenuItem::linkToCrud('Car Body','fas fa-car-side',CarBody::class);
-        yield MenuItem::linkToCrud('Engine', 'fas fa-cogs', Engine::class);
-        yield MenuItem::section('Components Value');
-        yield MenuItem::linkToCrud('Engine Value', 'fas fa-cogs', EngineValue::class);
-        yield MenuItem::linkToCrud('Car Body Value', 'fas fa-car-side', CarBodyValue::class);
-        yield MenuItem::section('Components Property');
-        yield MenuItem::linkToCrud('Engine Property', 'fas fa-cogs', EngineProperty::class);
-        yield MenuItem::linkToCrud('Car Body Property', 'fas fa-car-side', CarBodyProperty::class);
+        yield MenuItem::linkToCrud('Advertising', 'fas fa-money-check-alt', Advertising::class)->setPermission('ROLE_MARKERING');
+        yield MenuItem::linkToCrud('Newses', 'fas fa-newspaper', Newses::class)->setPermission('ROLE_JOURNALIST');
+        yield MenuItem::linkToCrud('Sales offers', 'fas fa-hand-holding-usd', SalesOffers::class)->setPermission('ROLE_SPECIALIST');
+        yield MenuItem::linkToCrud('Car data specialist', 'fas fa-user-graduate', SpecialistComment::class)->setPermission('ROLE_SPECIALIST');
+        yield MenuItem::section('Blog')->setPermission('ROLE_SPECIALIST');
+        yield MenuItem::linkToCrud('Posts', 'fas fa-comment-dots', Post::class)->setPermission('ROLE_SPECIALIST');
+        yield MenuItem::linkToCrud('Comments', 'fas fa-comments', Comment::class)->setPermission('ROLE_SPECIALIST');
+        yield MenuItem::section('Users')->setPermission('ROLE_SUPER_ADMIN');
+        yield MenuItem::linkToCrud('Gender', 'fas fa-venus-mars', Gender::class)->setPermission('ROLE_SUPER_ADMIN');
+        yield MenuItem::linkToCrud('User', 'fas fa-users', User::class)->setPermission('ROLE_SUPER_ADMIN');
+        yield MenuItem::linkToCrud('Reset password request', 'fas fa-key', ResetPasswordRequest::class)->setPermission('ROLE_SUPER_ADMIN');
+        yield MenuItem::section('Car Components',)->setPermission('ROLE_SPECIALIST');
+        yield MenuItem::linkToCrud('Brand', 'fas fa-trademark', Brand::class)->setPermission('ROLE_SPECIALIST');
+        yield MenuItem::linkToCrud('Model', 'fas fa-car-alt', Model::class)->setPermission('ROLE_SPECIALIST');
+        yield MenuItem::linkToCrud('Generation','fas fa-car',Generation::class)->setPermission('ROLE_SPECIALIST');
+        yield MenuItem::linkToCrud('Car Body','fas fa-car-side',CarBody::class)->setPermission('ROLE_SPECIALIST');
+        yield MenuItem::linkToCrud('Engine', 'fas fa-cogs', Engine::class)->setPermission('ROLE_SPECIALIST');
+        yield MenuItem::section('Components Value')->setPermission('ROLE_SPECIALIST');
+        yield MenuItem::linkToCrud('Engine Value', 'fas fa-cogs', EngineValue::class)->setPermission('ROLE_SPECIALIST');
+        yield MenuItem::linkToCrud('Car Body Value', 'fas fa-car-side', CarBodyValue::class)->setPermission('ROLE_SPECIALIST');
+        yield MenuItem::section('Components Property')->setPermission('ROLE_SPECIALIST');
+        yield MenuItem::linkToCrud('Engine Property', 'fas fa-cogs', EngineProperty::class)->setPermission('ROLE_SPECIALIST');
+        yield MenuItem::linkToCrud('Car Body Property', 'fas fa-car-side', CarBodyProperty::class)->setPermission('ROLE_SPECIALIST');
 
 
 

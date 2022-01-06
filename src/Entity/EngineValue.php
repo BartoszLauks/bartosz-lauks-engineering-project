@@ -99,4 +99,9 @@ class EngineValue
     {
         $this->createdAt = new \DateTime();
     }
+
+    public function __toString(): string
+    {
+        return $this->getValue();
+    }
 }

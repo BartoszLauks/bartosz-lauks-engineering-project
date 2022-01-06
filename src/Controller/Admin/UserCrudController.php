@@ -7,18 +7,14 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
-use EasyCorp\Bundle\EasyAdminBundle\Dto\FieldDto;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\EmailField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\Field;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TelephoneField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
-use Symfony\Component\Form\Extension\Core\Type\PasswordType;
-use function Sodium\add;
 
 class UserCrudController extends AbstractCrudController
 {
@@ -39,8 +35,9 @@ class UserCrudController extends AbstractCrudController
                 ->setChoices([
                         "Journalist" => "ROLE_JOURNALIST",
                         "Marketing" => "ROLE_MARKERING",
-                        'Car data specialist' => "ROLE_SPECIALIST",
-                        'Admin' => 'ROLE_ADMIN'
+                        'Data specialist' => "ROLE_SPECIALIST",
+                        'Admin' => 'ROLE_ADMIN',
+                        'Super Admin' => 'ROLE_SUPER_ADMIN'
                     ]
                 ),
             BooleanField::new('isVerified'),
