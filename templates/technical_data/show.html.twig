@@ -3,7 +3,6 @@
 {% block title %}Technical data{% endblock %}
 
 {% block body %}
-    {{ dump() }}
     <a href="{{ path('technical_data_brand') }}">| Select |</a>
     {% if brand|default %}
         <a href="{{ path('technical_data_model', { brand : brand}) }}">| {{ brand }} |</a>

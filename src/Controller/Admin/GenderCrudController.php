@@ -3,6 +3,7 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Gender;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
@@ -22,5 +23,13 @@ class GenderCrudController extends AbstractCrudController
             TextField::new('name'),
             AssociationField::new('user')->hideOnForm()
         ];
+    }
+
+    public function configureFilters(Filters $filters): Filters
+    {
+        return $filters
+            ->add('name')
+            ->add('user')
+            ;
     }
 }

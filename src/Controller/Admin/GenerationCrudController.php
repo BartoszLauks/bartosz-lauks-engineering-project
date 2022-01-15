@@ -3,6 +3,7 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Generation;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
@@ -26,8 +27,8 @@ class GenerationCrudController extends AbstractCrudController
             IdField::new('id')->hideOnForm(),
             TextField::new('name'),
             TextEditorField::new('description'),
-            AssociationField::new('carBodies'),
             AssociationField::new('model'),
+            AssociationField::new('carBodies')->hideOnForm(),
             ImageField::new('file')
                 ->setLabel("Image")
                 ->setBasePath('uploads/generation/')
@@ -37,5 +38,15 @@ class GenerationCrudController extends AbstractCrudController
             IntegerField::new('producedFrom'),
             IntegerField::new('producedUntil')
         ];
+    }
+
+    public function configureFilters(Filters $filters): Filters
+    {
+        return $filters
+            ->add('name')
+            ->add('model')
+            ->add('producedFrom')
+            ->add('producedUntil')
+            ;
     }
 }

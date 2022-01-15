@@ -20,7 +20,7 @@
                         <h3 class="card-title">Price : {{ offer.price|number_format(2, '.', ',')  }} $</h3>
                         <h4 class="card-title">Mileage : {{ offer.mileage|number_format(0, '.')  }} km</h4>
                         <h5 class="card-title">{{ offer.brand.name }} {{ offer.model.name }} {{ offer.generation.name }} {{ offer.carBody.name }} {{ offer.engine.name }} </h5>
-                        <p class="card-text"><small class="text-muted">Comment added at : {{ offer.createdAt|date("F jS \\a\\t g:ia") }}</small></p>
+                        <p class="card-text"><small class="text-muted">Offert added at : {{ offer.createdAt|date("F jS \\a\\t g:ia") }}</small></p>
                         <p class="card-text"><small class="text-muted">By : {{ offer.user.name }} {{ offer.user.surname }}</small></p>
                         {% if app.user == offer.user %}
                             <a href="{{ path('car_seles_offers_user_remove',{offer : offer.id}) }}">

@@ -50,7 +50,7 @@ class DashboardController extends AbstractDashboardController
     {
         yield MenuItem::linkToRoute('WebSite', 'fas fa-globe', 'app_home');
         yield MenuItem::section('Website functionality');
-        yield MenuItem::linkToCrud('Advertising', 'fas fa-money-check-alt', Advertising::class)->setPermission('ROLE_MARKERING');
+        yield MenuItem::linkToCrud('Advertising', 'fas fa-money-check-alt', Advertising::class)->setPermission("ROLE_MARKERING");
         yield MenuItem::linkToCrud('Newses', 'fas fa-newspaper', Newses::class)->setPermission('ROLE_JOURNALIST');
         yield MenuItem::linkToCrud('Sales offers', 'fas fa-hand-holding-usd', SalesOffers::class)->setPermission('ROLE_SPECIALIST');
         yield MenuItem::linkToCrud('Car data specialist', 'fas fa-user-graduate', SpecialistComment::class)->setPermission('ROLE_SPECIALIST');

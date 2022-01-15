@@ -3,6 +3,7 @@
 namespace App\Controller\Admin;
 
 use App\Entity\EngineProperty;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
@@ -16,15 +17,22 @@ class EnginePropertyCrudController extends AbstractCrudController
         return EngineProperty::class;
     }
 
-
     public function configureFields(string $pageName): iterable
     {
         return [
             IdField::new('id')->hideOnForm(),
             TextField::new('property'),
             DateTimeField::new('createdAt')->hideOnForm(),
-            AssociationField::new('engineValues')
+            AssociationField::new('engineValues')->hideOnForm()
         ];
     }
 
+    public function configureFilters(Filters $filters): Filters
+    {
+        return $filters
+            ->add('createdAt')
+            ->add('property')
+            ->add('engineValues')
+            ;
+    }
 }

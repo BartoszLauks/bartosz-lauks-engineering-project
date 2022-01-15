@@ -1,11 +1,6 @@
 {% extends '@EasyAdmin/page/content.html.twig' %}
 
-{% block content_title %}Welcome in admin panel{% endblock %}
-
-{% block page_actions %}
-    <a class="btn btn-primary" href="...">Some Action</a>
-{% endblock %}
+{% block content_title %}Welcome {{ app.user.name }} {{ app.user.surname }} in admin panel {% endblock %}
 
 {% block main %}
-
 {% endblock %}

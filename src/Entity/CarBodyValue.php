@@ -4,10 +4,13 @@ namespace App\Entity;
 
 use App\Repository\CarBodyValueRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=CarBodyValueRepository::class)
  * @ORM\HasLifecycleCallbacks()
+ * @UniqueEntity(fields={"carBody","property"})
  */
 class CarBodyValue
 {
@@ -20,6 +23,7 @@ class CarBodyValue
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank()
      */
     private $value;
 
@@ -30,11 +34,13 @@ class CarBodyValue
 
     /**
      * @ORM\ManyToOne(targetEntity=CarBody::class, inversedBy="value")
+     * @Assert\NotBlank()
      */
     private $carBody;
 
     /**
      * @ORM\ManyToOne(targetEntity=CarBodyProperty::class, inversedBy="carBodyValues")
+     * @Assert\NotBlank()
      */
     private $property;
 

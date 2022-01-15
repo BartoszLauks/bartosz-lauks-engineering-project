@@ -4,10 +4,13 @@ namespace App\Entity;
 
 use App\Repository\EngineValueRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=EngineValueRepository::class)
  * @ORM\HasLifecycleCallbacks()
+ * @UniqueEntity(fields={"engine","property"})
  */
 class EngineValue
 {
@@ -20,6 +23,7 @@ class EngineValue
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank()
      */
     private $value;
 
@@ -30,11 +34,13 @@ class EngineValue
 
     /**
      * @ORM\ManyToOne(targetEntity=Engine::class, inversedBy="value")
+     * @Assert\NotBlank()
      */
     private $engine;
 
     /**
      * @ORM\ManyToOne(targetEntity=EngineProperty::class, inversedBy="engineValues")
+     * @Assert\NotBlank()
      */
     private $property;
 

@@ -6,9 +6,12 @@ use App\Repository\CarBodyRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=CarBodyRepository::class)
+ * @UniqueEntity(fields={"name","generation"})
  */
 class CarBody
 {
@@ -21,6 +24,7 @@ class CarBody
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank()
      */
     private $name;
 
@@ -36,6 +40,7 @@ class CarBody
 
     /**
      * @ORM\ManyToOne(targetEntity=Generation::class, inversedBy="carBodies")
+     * @Assert\NotBlank()
      */
     private $generation;
 

@@ -27,6 +27,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * @ORM\Column(type="string", length=180, unique=true)
+     * @Assert\NotBlank()
      */
     private $email;
 
@@ -43,36 +44,43 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * @ORM\Column(type="string", length=200, nullable=false)
+     * @Assert\NotBlank()
      */
     private $name;
 
     /**
      * @ORM\Column(type="string", length=200, nullable=false)
+     * @Assert\NotBlank()
      */
     private $surname;
 
     /**
      * @ORM\Column(type="string", length=200, nullable=false)
+     * @Assert\NotBlank()
      */
     private $city;
 
     /**
      * @ORM\Column(type="string", length=100, nullable=false)
+     * @Assert\NotBlank()
      */
     private $post_code;
 
     /**
      * @ORM\Column(type="string", length=200, nullable=false)
+     * @Assert\NotBlank()
      */
     private $street;
 
     /**
      * @ORM\Column(type="string", length=100, nullable=false)
+     * @Assert\NotBlank()
      */
     private $home_nr;
 
     /**
      * @ORM\Column(type="string", length=100, nullable=false)
+     * @Assert\NotBlank()
      */
     private $phone;
 

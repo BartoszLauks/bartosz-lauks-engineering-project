@@ -3,6 +3,7 @@
 namespace App\Controller\Admin;
 
 use App\Entity\CarBody;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
@@ -22,7 +23,17 @@ class CarBodyCrudController extends AbstractCrudController
             IdField::new('id')->hideOnForm(),
             TextField::new('name'),
             TextEditorField::new('description'),
-            AssociationField::new('engines')
+            AssociationField::new('generation'),
+            AssociationField::new('engines')->hideOnForm(),
+
         ];
+    }
+
+    public function configureFilters(Filters $filters): Filters
+    {
+        return $filters
+            ->add('name')
+            ->add('generation')
+            ;
     }
 }

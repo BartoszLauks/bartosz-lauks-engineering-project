@@ -3,6 +3,7 @@
 namespace App\Controller\Admin;
 
 use App\Entity\CarBodyProperty;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
@@ -22,7 +23,16 @@ class CarBodyPropertyCrudController extends AbstractCrudController
             IdField::new('id')->hideOnForm(),
             TextField::new('property'),
             DateTimeField::new('createdAt')->hideOnForm(),
-            AssociationField::new('carBodyValues')
+            AssociationField::new('carBodyValues')->hideOnForm()
         ];
+    }
+
+    public function configureFilters(Filters $filters): Filters
+    {
+        return $filters
+            ->add('createdAt')
+            ->add('property')
+            ->add('carBodyValues')
+            ;
     }
 }

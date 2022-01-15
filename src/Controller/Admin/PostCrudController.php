@@ -48,6 +48,7 @@ class PostCrudController extends AbstractCrudController
     {
         return $filters
             ->add('createdAt')
+            ->add('title')
             ->add('user')
             ->add('brand')
             ->add('model')

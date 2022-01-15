@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\SalesOffersRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=SalesOffersRepository::class)
@@ -50,11 +51,17 @@ class SalesOffers
 
     /**
      * @ORM\Column(type="integer")
+     * @Assert\NotBlank()
+     * @Assert\PositiveOrZero()
+     * @Assert\Type(type="integer")
      */
     private $price;
 
     /**
      * @ORM\Column(type="integer")
+     * @Assert\NotBlank()
+     * @Assert\PositiveOrZero
+     * @Assert\Type(type="integer")
      */
     private $mileage;
 
@@ -70,11 +77,14 @@ class SalesOffers
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank()
      */
     private $file;
 
     /**
      * @ORM\Column(type="date")
+     * @Assert\NotBlank()
+     * @Assert\LessThanOrEqual("today UTC")
      */
     private $producedAt;
 

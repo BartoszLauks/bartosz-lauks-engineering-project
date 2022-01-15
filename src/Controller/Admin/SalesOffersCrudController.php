@@ -9,6 +9,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ImageField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
@@ -35,6 +36,7 @@ class SalesOffersCrudController extends AbstractCrudController
             IntegerField::new('price'),
             NumberField::new('mileage'),
             TextareaField::new('details'),
+            DateField::new("producedAt"),
             AssociationField::new('user'),
             AssociationField::new('brand'),
             AssociationField::new('model'),
@@ -57,6 +59,7 @@ class SalesOffersCrudController extends AbstractCrudController
             ->add('createdAt')
             ->add('mileage')
             ->add('price')
+            ->add('producedAt')
             ->add('user')
             ->add('brand')
             ->add('model')

@@ -19,7 +19,12 @@ class NewOfferType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('price',MoneyType::class)
+            ->add('price',MoneyType::class,[
+                'constraints' => [new Positive()],
+                'attr' => [
+                    'min' => 1
+                ]
+            ])
             ->add('mileage',IntegerType::class,[
                 'constraints' => [new Positive()],
                 'attr' => [

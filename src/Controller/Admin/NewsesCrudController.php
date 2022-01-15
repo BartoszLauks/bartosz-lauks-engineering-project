@@ -26,7 +26,7 @@ class NewsesCrudController extends AbstractCrudController
         return [
             IdField::new('id')->hideOnForm(),
             TextField::new('title'),
-            TextareaField::new('context'),
+            TextareaField::new('context')->setLabel('Content'),
             ImageField::new('file')
                 ->setLabel("Image")
                 ->setBasePath('uploads/newses/')

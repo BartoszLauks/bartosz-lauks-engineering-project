@@ -10,6 +10,7 @@ use App\Repository\CarBodyRepository;
 use App\Repository\EngineRepository;
 use App\Repository\GenerationRepository;
 use App\Repository\ModelRepository;
+use Doctrine\ORM\NonUniqueResultException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -110,12 +111,14 @@ class NewCarsController extends AbstractController
             throw new NotFoundHttpException();
         }
 
-        $model = $this->modelRepository->findOneBy(['name' => $generation->getName()]);
-        $body = $this->brandRepository->findOneBy(['name' => $model->getName()]);
+        $model = $this->modelRepository->getOneModelByGeneration($generation, $body, $engine);
+        if (empty($model)) throw new NotFoundHttpException();
+        $brand = $this->brandRepository->getOneBrandByModel($model[0],$generation, $body, $engine);
+        if (empty($brand)) throw new NotFoundHttpException();;
 
         return $this->render('new_cars/selectAll.html.twig', [
-            'brand' => $body,
-            'model' => $model,
+            'brand' => $body[0],
+            'model' => $model[0],
             'generation' => $generation,
             'body' => $body,
             'engine' => $engine,
@@ -123,7 +126,6 @@ class NewCarsController extends AbstractController
         ]);
     }
 
-    // TODO : here is end
     #[Route('/year-ago/', name: 'new_cars_year_ago_generation')]
     public function carYearAgoChoosingGeneration(): Response
     {
@@ -183,12 +185,14 @@ class NewCarsController extends AbstractController
             throw new NotFoundHttpException();
         }
 
-        $model = $this->modelRepository->findOneBy(['name' => $generation->getName()]);
-        $body = $this->brandRepository->findOneBy(['name' => $model->getName()]);
+        $model = $this->modelRepository->getOneModelByGeneration($generation, $body, $engine);
+        if (empty($model)) throw new NotFoundHttpException();
+        $brand = $this->brandRepository->getOneBrandByModel($model[0],$generation, $body, $engine);
+        if (empty($brand)) throw new NotFoundHttpException();
 
         return $this->render('new_cars/selectAll.html.twig', [
-            'brand' => $body,
-            'model' => $model,
+            'brand' => $brand[0],
+            'model' => $model[0],
             'generation' => $generation,
             'body' => $body,
             'engine' => $engine
