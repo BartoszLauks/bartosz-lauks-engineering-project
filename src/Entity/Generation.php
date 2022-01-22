@@ -12,6 +12,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=GenerationRepository::class)
+ * @ORM\HasLifecycleCallbacks()
  * @UniqueEntity(fields={"name","model"})
  */
 class Generation
@@ -66,6 +67,7 @@ class Generation
      * @ORM\Column(type="integer")
      * @Assert\NotBlank()
      * @Assert\PositiveOrZero()
+     * @Assert\GreaterThanOrEqual(propertyPath="producedUntil")
      * @Groups({"new_car"})
      */
     private $producedFrom;
@@ -88,6 +90,11 @@ class Generation
      * @Groups({"new_car"})
      */
     private $file;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $createdAt;
 
     public function __construct()
     {
@@ -297,5 +304,25 @@ class Generation
         $this->file = $file;
 
         return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeInterface
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(?\DateTimeInterface $createdAt): self
+    {
+        $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    /**
+     * @ORM\PrePersist
+     */
+    public function setCreatedAtValue()
+    {
+        $this->createdAt = new \DateTime();
     }
 }

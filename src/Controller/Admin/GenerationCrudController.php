@@ -6,6 +6,7 @@ use App\Entity\Generation;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ImageField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
@@ -27,6 +28,7 @@ class GenerationCrudController extends AbstractCrudController
             IdField::new('id')->hideOnForm(),
             TextField::new('name'),
             TextEditorField::new('description'),
+            DateTimeField::new("createdAt")->hideOnForm(),
             AssociationField::new('model'),
             AssociationField::new('carBodies')->hideOnForm(),
             ImageField::new('file')
@@ -47,6 +49,7 @@ class GenerationCrudController extends AbstractCrudController
             ->add('model')
             ->add('producedFrom')
             ->add('producedUntil')
+            ->add('createdAt')
             ;
     }
 }

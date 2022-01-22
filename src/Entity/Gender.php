@@ -11,6 +11,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=GenderRepository::class)
+ * @ORM\HasLifecycleCallbacks()
  * @UniqueEntity("name")
  */
 class Gender
@@ -32,6 +33,11 @@ class Gender
      * @ORM\OneToMany(targetEntity=User::class, mappedBy="gender")
      */
     private $user;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $createdAt;
 
     public function __construct()
     {
@@ -88,5 +94,25 @@ class Gender
     public function __toString(): string
     {
         return $this->getName();
+    }
+
+    public function getCreatedAt(): ?\DateTimeInterface
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(?\DateTimeInterface $createdAt): self
+    {
+        $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    /**
+     * @ORM\PrePersist
+     */
+    public function setCreatedAtValue()
+    {
+        $this->createdAt = new \DateTime();
     }
 }

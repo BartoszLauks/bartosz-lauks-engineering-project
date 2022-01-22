@@ -6,6 +6,7 @@ use App\Entity\Model;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
@@ -23,6 +24,7 @@ class ModelCrudController extends AbstractCrudController
             IdField::new('id')->hideOnForm(),
             TextField::new('name'),
             TextEditorField::new('description'),
+            DateTimeField::new("createdAt")->hideOnForm(),
             AssociationField::new('brand'),
             AssociationField::new('generations')->hideOnForm(),
 
@@ -34,6 +36,7 @@ class ModelCrudController extends AbstractCrudController
         return $filters
             ->add('name')
             ->add('brand')
+            ->add('createdAt')
             ;
     }
 }

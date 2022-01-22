@@ -11,6 +11,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=ModelRepository::class)
+ * @ORM\HasLifecycleCallbacks()
  * @UniqueEntity(fields={"name","brand"})
  */
 class Model
@@ -58,6 +59,11 @@ class Model
      * @ORM\OneToMany(targetEntity=SpecialistComment::class, mappedBy="model")
      */
     private $specialistComments;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $createdAt;
 
     public function __construct()
     {
@@ -231,5 +237,25 @@ class Model
         }
 
         return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeInterface
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(?\DateTimeInterface $createdAt): self
+    {
+        $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    /**
+     * @ORM\PrePersist
+     */
+    public function setCreatedAtValue()
+    {
+        $this->createdAt = new \DateTime();
     }
 }

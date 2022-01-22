@@ -117,7 +117,7 @@ class NewCarsController extends AbstractController
         if (empty($brand)) throw new NotFoundHttpException();;
 
         return $this->render('new_cars/selectAll.html.twig', [
-            'brand' => $body[0],
+            'brand' => $brand[0],
             'model' => $model[0],
             'generation' => $generation,
             'body' => $body,

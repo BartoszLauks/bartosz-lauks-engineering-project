@@ -46,7 +46,7 @@ class UserCrudController extends AbstractCrudController
             TextField::new('surname')->onlyOnDetail(),
             DateTimeField::new('createAt')->hideOnForm(),
             AssociationField::new('gender')->onlyOnDetail(),
-            TextField::new('password')->hideWhenUpdating()->setMaxLength(10),
+            TextField::new('password')->hideWhenUpdating()->setMaxLength(10)->onlyOnDetail(),
             TextField::new('post_code')->onlyOnDetail(),
             TextField::new('city')->onlyOnDetail(),
             TextField::new('street')->onlyOnDetail(),
