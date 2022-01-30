@@ -59,15 +59,20 @@ class CarDataSpecialistController extends AbstractController
     {
         $form = $this->formFactory->create(ChoicesBrandType::class);
 
+        $offset = max(0, $request->query->getInt('offset', 0));
+        $comments = $this->specialistCommentRepository->getSpecialistComment($offset);
+
         $form->handleRequest($request);
         if ($form->isSubmitted())
         {
             $brand = $form->getData()['brand'];
-            return $this->redirect($request->getUri().$brand->getName());
+            return $this->redirect($this->generateUrl('car_specialist_model', ['brand' => $brand]));
         }
         return $this->render('/car_data_specialist/index.html.twig',[
             'form' => $form->createView(),
-            'comments' => []
+            'comments' => $comments,
+            'previous' => $offset - SpecialistCommentRepository::PAGINATOR_PER_PAGE,
+            'next' => min(count($comments), $offset + SpecialistCommentRepository::PAGINATOR_PER_PAGE)
         ]);
     }
 
@@ -79,7 +84,9 @@ class CarDataSpecialistController extends AbstractController
         if (empty($model)) {
             throw new NotFoundHttpException();
         }
-        $comments = $this->specialistCommentRepository->getSpecialistCommentByBrand($brand);
+
+        $offset = max(0, $request->query->getInt('offset', 0));
+        $comments = $this->specialistCommentRepository->getSpecialistCommentByBrand($brand,$offset);
 
         $form = $this->formFactory->create(ChoicesModelType::class,[],[
             'model' => $model
@@ -90,12 +97,14 @@ class CarDataSpecialistController extends AbstractController
         {
             $model = $form->getData()['model'];
 
-            return $this->redirect($request->getUri().$model);
+            return $this->redirect($this->generateUrl('car_specialist_generation',['brand' => $brand->getName(), 'model' => $model]));
         }
         return $this->render('/car_data_specialist/index.html.twig',[
             'form' => $form->createView(),
             'brand' => $brand->getName(),
-            'comments' => $comments
+            'comments' => $comments,
+            'previous' => $offset - SpecialistCommentRepository::PAGINATOR_PER_PAGE,
+            'next' => min(count($comments), $offset + SpecialistCommentRepository::PAGINATOR_PER_PAGE)
         ]);
     }
 
@@ -108,7 +117,8 @@ class CarDataSpecialistController extends AbstractController
         if (empty($generation)) {
             throw new NotFoundHttpException();
         }
-        $comments = $this->specialistCommentRepository->getSpecialistCommentByModel($brand,$model);
+        $offset = max(0, $request->query->getInt('offset', 0));
+        $comments = $this->specialistCommentRepository->getSpecialistCommentByModel($brand,$model,$offset);
 
         $form = $this->formFactory->create(ChoicesGenerationType::class,[],[
             'generation' => $generation
@@ -118,13 +128,16 @@ class CarDataSpecialistController extends AbstractController
         if ($form->isSubmitted())
         {
             $generation = $form->getData()['generation'];
-            return $this->redirect($request->getUri().$generation);
+            return $this->redirect($this->generateUrl('car_specialist_body',['brand' => $brand->getName(),
+                'model' => $model->getName(), 'generation' => $generation]));
         }
         return $this->render('/car_data_specialist/index.html.twig',[
             'form' => $form->createView(),
             'brand' => $brand->getName(),
             'model' => $model->getName(),
-            'comments' => $comments
+            'comments' => $comments,
+            'previous' => $offset - SpecialistCommentRepository::PAGINATOR_PER_PAGE,
+            'next' => min(count($comments), $offset + SpecialistCommentRepository::PAGINATOR_PER_PAGE)
         ]);
     }
 
@@ -138,7 +151,8 @@ class CarDataSpecialistController extends AbstractController
         if (empty($body)) {
             throw new NotFoundHttpException();
         }
-        $comments = $this->specialistCommentRepository->getSpecialistCommentByGeneration($brand,$model,$generation);
+        $offset = max(0, $request->query->getInt('offset', 0));
+        $comments = $this->specialistCommentRepository->getSpecialistCommentByGeneration($brand,$model,$generation,$offset);
 
         $form = $this->formFactory->create(ChoicesBodyType::class,[],[
             'body' => $body,
@@ -148,14 +162,17 @@ class CarDataSpecialistController extends AbstractController
         if ($form->isSubmitted())
         {
             $body = $form->getData()['body'];
-            return $this->redirect($request->getUri().$body);
+            return $this->redirect($this->generateUrl('car_specialist_engine',['brand' => $brand->getName(),
+                'model' => $model->getName(), 'generation' => $generation->getName(), 'body' => $body]));
         }
         return $this->render('/car_data_specialist/index.html.twig',[
             'form' => $form->createView(),
             'brand' => $brand->getName(),
             'model' => $model->getName(),
             'generation' => $generation->getName(),
-            'comments' => $comments
+            'comments' => $comments,
+            'previous' => $offset - SpecialistCommentRepository::PAGINATOR_PER_PAGE,
+            'next' => min(count($comments), $offset + SpecialistCommentRepository::PAGINATOR_PER_PAGE)
         ]);
     }
 
@@ -170,7 +187,8 @@ class CarDataSpecialistController extends AbstractController
         if (empty($engine)) {
             throw new NotFoundHttpException();
         }
-        $comments = $this->specialistCommentRepository->getSpecialistCommentByCarBody($brand,$model,$generation,$body);
+        $offset = max(0, $request->query->getInt('offset', 0));
+        $comments = $this->specialistCommentRepository->getSpecialistCommentByCarBody($brand,$model,$generation,$body,$offset);
 
         $form = $this->formFactory->create(ChoicesEngineType::class,[],[
             'engine' => $engine
@@ -180,7 +198,9 @@ class CarDataSpecialistController extends AbstractController
         if ($form->isSubmitted())
         {
             $engine = $form->getData()['engine'];
-            return $this->redirect($request->getUri().$engine);
+            return $this->redirect($this->generateUrl('car_specialist_all',['brand' => $brand->getName(),
+                'model' => $model->getName(), 'generation' => $generation->getName(), 'body' => $body->getName(),
+                'engine' => $engine]));
         }
         return $this->render('/car_data_specialist/index.html.twig',[
             'form' => $form->createView(),
@@ -188,7 +208,9 @@ class CarDataSpecialistController extends AbstractController
             'model' => $model->getName(),
             'generation' => $generation->getName(),
             'body' => $body->getName(),
-            'comments' => $comments
+            'comments' => $comments,
+            'previous' => $offset - SpecialistCommentRepository::PAGINATOR_PER_PAGE,
+            'next' => min(count($comments), $offset + SpecialistCommentRepository::PAGINATOR_PER_PAGE)
         ]);
     }
 
@@ -198,14 +220,15 @@ class CarDataSpecialistController extends AbstractController
     #[ParamConverter('generation', options: ['mapping' => ['generation' => 'name']])]
     #[ParamConverter('body', options: ['mapping' => ['body' => 'name']])]
     #[ParamConverter('engine', options: ['mapping' => ['engine' => 'name']])]
-    public function allComponents(Brand $brand,Model $model,Generation $generation,CarBody $body, Engine $engine): Response
+    public function allComponents(Request $request,Brand $brand,Model $model,Generation $generation,CarBody $body, Engine $engine): Response
     {
         $components = $this->engineRepository->checkCarExist($brand,$model,$generation,$body,$engine);
         if (empty($components))
         {
             throw new NotFoundHttpException();
         }
-        $comments = $this->specialistCommentRepository->getSpecialistCommentByEngine($brand,$model,$generation,$body,$engine);
+        $offset = max(0, $request->query->getInt('offset', 0));
+        $comments = $this->specialistCommentRepository->getSpecialistCommentByEngine($brand,$model,$generation,$body,$engine,$offset);
 
         return $this->render('/car_data_specialist/index.html.twig',[
             'brand' => $brand->getName(),
@@ -213,7 +236,9 @@ class CarDataSpecialistController extends AbstractController
             'generation' => $generation->getName(),
             'body' => $body->getName(),
             'engine' => $engine->getName(),
-            'comments' => $comments
+            'comments' => $comments,
+            'previous' => $offset - SpecialistCommentRepository::PAGINATOR_PER_PAGE,
+            'next' => min(count($comments), $offset + SpecialistCommentRepository::PAGINATOR_PER_PAGE)
         ]);
     }
 }

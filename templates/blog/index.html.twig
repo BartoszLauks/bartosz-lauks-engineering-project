@@ -63,4 +63,76 @@
             </a>
         {% endfor %}
     {% endif %}
+
+    <ul class="pagination">
+    {% if next|default %}
+        {% if engine|default and body|default and generation|default and model|default and brand|default %}
+            {% if previous >= 0 %}
+                <li class="page-item">
+                    <a class="page-l    ink" href="{{ path('blog_all', { brand : brand, model : model, generation : generation, body : body, engine : engine, offset: previous }) }}">Previous</a>
+                </li>
+            {% endif %}
+            {% if next < posts|length %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ path('blog_all', { brand : brand, model : model, generation : generation, body : body, engine : engine, offset: next }) }}">Next</a>
+                </li>
+            {% endif %}
+        {% elseif body|default and generation|default and model|default and brand|default %}
+            {% if previous >= 0 %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ path('blog_engine', { brand : brand, model : model, generation : generation, body : body, offset: previous }) }}">Previous</a>
+                </li>
+            {% endif %}
+            {% if next < posts|length %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ path('blog_engine', { brand : brand, model : model, generation : generation, body : body, offset: next }) }}">Next</a>
+                </li>
+            {% endif %}
+        {% elseif generation|default and model|default and brand|default %}
+            {% if previous >= 0 %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ path('blog_body', { brand : brand, model : model, generation : generation, offset: previous }) }}">Previous</a>
+                </li>
+            {% endif %}
+            {% if next < posts|length %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ path('blog_body', { brand : brand, model : model, generation : generation, offset: next }) }}">Next</a>
+                </li>
+            {% endif %}
+        {% elseif model|default and brand|default %}
+            {% if previous >= 0 %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ path('blog_generation', { brand : brand, model : model, offset: previous }) }}">Previous</a>
+                </li>
+            {% endif %}
+            {% if next < posts|length %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ path('blog_generation', { brand : brand, model : model, offset: next }) }}">Next</a>
+                </li>
+            {% endif %}
+        {% elseif brand|default %}
+            {% if previous >= 0 %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ path('blog_model', { brand : brand, offset: previous }) }}">Previous</a>
+                </li>
+            {% endif %}
+            {% if next < posts|length %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ path('blog_model', { brand : brand, offset: next }) }}">Next</a>
+                </li>
+            {% endif %}
+        {% else %}
+            {% if previous >= 0 %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ path('blog_brand', { offset: previous }) }}">Previous</a>
+                </li>
+            {% endif %}
+            {% if next < posts|length %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ path('blog_brand', { offset: next }) }}">Next</a>
+                </li>
+            {% endif %}
+        {% endif %}
+    {% endif %}
+    </ul>
 {% endblock %}

@@ -20,17 +20,20 @@ class SearchBarController extends AbstractController
         $this->postRepository = $postRepository;
     }
 
-    #[Route('/search/bar', name: 'search_bar')]
+    #[Route('/search/bar/', name: 'search_bar')]
     public function index(Request $request): Response
     {
         $text = $request->query->get("search-text");
 
         if ($text === '') $this->redirect($this->generateUrl('app_home'));
 
-        $posts = $this->postRepository->searchPosts($text);
+        $offset = max(0, $request->query->getInt('offset', 0));
+        $posts = $this->postRepository->searchPosts($text,$offset);
 
         return $this->render('search_bar/index.html.twig', [
-            'posts' => $posts
+            'posts' => $posts,
+            'previous' => $offset - PostRepository::PAGINATOR_PER_PAGE,
+            'next' => min(count($posts), $offset + PostRepository::PAGINATOR_PER_PAGE)
         ]);
     }
 }

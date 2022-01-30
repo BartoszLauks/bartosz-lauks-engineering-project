@@ -19,6 +19,7 @@ use App\Repository\EngineRepository;
 use App\Repository\GenerationRepository;
 use App\Repository\ModelRepository;
 use App\Repository\SalesOffersRepository;
+use App\Repository\SpecialistCommentRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
@@ -79,16 +80,20 @@ class CarSelesOffersController extends AbstractController
         $form = $this->formFactory->create(ChoicesBrandType::class);
         $form->handleRequest($request);
 
-        $offers = $this->offersRepository->getOffers();
+        $offset = max(0, $request->query->getInt('offset', 0));
+        $offers = $this->offersRepository->getOffers($offset);
 
         if ($form->isSubmitted())
         {
             $brand = $form->getData()['brand'];
-            return $this->redirect($request->getUri().$brand->getName());
+
+            return $this->redirect($this->generateUrl('car_seles_offers_model',['brand' => $brand]));
         }
         return $this->render('/car_seles_offers/index.html.twig',[
             'form' => $form->createView(),
-            'offers' => $offers
+            'offers' => $offers,
+            'previous' => $offset - SalesOffersRepository::PAGINATOR_PER_PAGE,
+            'next' => min(count($offers), $offset + SalesOffersRepository::PAGINATOR_PER_PAGE)
 
         ]);
     }
@@ -101,7 +106,8 @@ class CarSelesOffersController extends AbstractController
         if (empty($model)) {
             throw new NotFoundHttpException();
         }
-        $offers = $this->offersRepository->getOffersByBrand($brand);
+        $offset = max(0, $request->query->getInt('offset', 0));
+        $offers = $this->offersRepository->getOffersByBrand($brand,$offset);
 
         $form = $this->formFactory->create(ChoicesModelType::class,[],[
             'model' => $model
@@ -112,12 +118,15 @@ class CarSelesOffersController extends AbstractController
         {
             $model = $form->getData()['model'];
 
-            return $this->redirect($request->getUri().$model);
+            return $this->redirect($this->generateUrl('car_seles_offers_generation',['brand' => $brand->getName(),
+                'model' => $model]));
         }
         return $this->render('/car_seles_offers/index.html.twig',[
             'brand' => $brand->getName(),
             'form' => $form->createView(),
-            'offers' => $offers
+            'offers' => $offers,
+            'previous' => $offset - SalesOffersRepository::PAGINATOR_PER_PAGE,
+            'next' => min(count($offers), $offset + SalesOffersRepository::PAGINATOR_PER_PAGE)
         ]);
     }
 
@@ -130,7 +139,8 @@ class CarSelesOffersController extends AbstractController
         if (empty($generation)) {
             throw new NotFoundHttpException();
         }
-        $offers = $this->offersRepository->getOffersByModel($brand,$model);
+        $offset = max(0, $request->query->getInt('offset', 0));
+        $offers = $this->offersRepository->getOffersByModel($brand,$model,$offset);
 
         $form = $this->formFactory->create(ChoicesGenerationType::class,[],[
             'generation' => $generation
@@ -140,13 +150,16 @@ class CarSelesOffersController extends AbstractController
         if ($form->isSubmitted())
         {
             $generation = $form->getData()['generation'];
-            return $this->redirect($request->getUri().$generation);
+            return $this->redirect($this->generateUrl('car_seles_offers_body',['brand' => $brand->getName(),
+                'model' => $model->getName(), 'generation' => $generation]));
         }
         return $this->render('/car_seles_offers/index.html.twig',[
             'brand' => $brand->getName(),
             'model' => $model->getName(),
             'form' => $form->createView(),
-            'offers' => $offers
+            'offers' => $offers,
+            'previous' => $offset - SalesOffersRepository::PAGINATOR_PER_PAGE,
+            'next' => min(count($offers), $offset + SalesOffersRepository::PAGINATOR_PER_PAGE)
         ]);
     }
 
@@ -160,7 +173,8 @@ class CarSelesOffersController extends AbstractController
         if (empty($body)) {
             throw new NotFoundHttpException();
         }
-        $offers = $this->offersRepository->getOffersByGeneration($brand,$model,$generation);
+        $offset = max(0, $request->query->getInt('offset', 0));
+        $offers = $this->offersRepository->getOffersByGeneration($brand,$model,$generation,$offset);
 
         $form = $this->formFactory->create(ChoicesBodyType::class,[],[
             'body' => $body,
@@ -170,14 +184,17 @@ class CarSelesOffersController extends AbstractController
         if ($form->isSubmitted())
         {
             $body = $form->getData()['body'];
-            return $this->redirect($request->getUri().$body);
+            return $this->redirect($this->generateUrl('car_seles_offers_engine',['brand' => $brand->getName(),
+                'model' => $model->getName(), 'generation' => $generation->getName(), 'body' => $body]));
         }
         return $this->render('/car_seles_offers/index.html.twig',[
             'brand' => $brand->getName(),
             'model' => $model->getName(),
             'generation' => $generation->getName(),
             'form' => $form->createView(),
-            'offers' => $offers
+            'offers' => $offers,
+            'previous' => $offset - SalesOffersRepository::PAGINATOR_PER_PAGE,
+            'next' => min(count($offers), $offset + SalesOffersRepository::PAGINATOR_PER_PAGE)
         ]);
     }
 
@@ -192,7 +209,8 @@ class CarSelesOffersController extends AbstractController
         if (empty($engine)) {
             throw new NotFoundHttpException();
         }
-        $offers = $this->offersRepository->getOffersByCarBody($brand,$model,$generation,$body);
+        $offset = max(0, $request->query->getInt('offset', 0));
+        $offers = $this->offersRepository->getOffersByCarBody($brand,$model,$generation,$body,$offset);
 
         $form = $this->formFactory->create(ChoicesEngineType::class,[],[
             'engine' => $engine
@@ -202,7 +220,8 @@ class CarSelesOffersController extends AbstractController
         if ($form->isSubmitted())
         {
             $engine = $form->getData()['engine'];
-            return $this->redirect($request->getUri().$engine);
+            return $this->redirect($this->generateUrl('car_seles_offers_all',['brand' => $brand->getName(),
+                'model' => $model->getName(), 'generation' => $generation->getName(), 'body' => $body->getName(), 'engine' => $engine]));
         }
         return $this->render('/car_seles_offers/index.html.twig',[
             'brand' => $brand->getName(),
@@ -210,7 +229,9 @@ class CarSelesOffersController extends AbstractController
             'generation' => $generation->getName(),
             'body' => $body->getName(),
             'form' => $form->createView(),
-            'offers' => $offers
+            'offers' => $offers,
+            'previous' => $offset - SalesOffersRepository::PAGINATOR_PER_PAGE,
+            'next' => min(count($offers), $offset + SalesOffersRepository::PAGINATOR_PER_PAGE)
         ]);
     }
 
@@ -220,14 +241,15 @@ class CarSelesOffersController extends AbstractController
     #[ParamConverter('generation', options: ['mapping' => ['generation' => 'name']])]
     #[ParamConverter('body', options: ['mapping' => ['body' => 'name']])]
     #[ParamConverter('engine', options: ['mapping' => ['engine' => 'name']])]
-    public function allComponents(Brand $brand,Model $model,Generation $generation,CarBody $body, Engine $engine): Response
+    public function allComponents(Request $request, Brand $brand,Model $model,Generation $generation,CarBody $body, Engine $engine): Response
     {
         $components = $this->engineRepository->checkCarExist($brand,$model,$generation,$body,$engine);
         if (empty($components))
         {
             throw new NotFoundHttpException();
         }
-        $offers = $this->offersRepository->getOffersByEngine($brand,$model,$generation,$body,$engine);
+        $offset = max(0, $request->query->getInt('offset', 0));
+        $offers = $this->offersRepository->getOffersByEngine($brand,$model,$generation,$body,$engine,$offset);
 
         return $this->render('/car_seles_offers/index.html.twig',[
             'brand' => $brand->getName(),
@@ -236,7 +258,9 @@ class CarSelesOffersController extends AbstractController
             'body' => $body->getName(),
             'engine' => $engine->getName(),
             'offers' => $offers,
-            'new' => true
+            'new' => true,
+            'previous' => $offset - SalesOffersRepository::PAGINATOR_PER_PAGE,
+            'next' => min(count($offers), $offset + SalesOffersRepository::PAGINATOR_PER_PAGE)
         ]);
     }
 
@@ -356,12 +380,15 @@ class CarSelesOffersController extends AbstractController
     }
 
     #[Route('-user/', name: 'car_seles_offers_user')]
-    public function userOffers(): Response
+    public function userOffers(Request $request): Response
     {
-        $offers = $this->offersRepository->getUserOffers();
+        $offset = max(0, $request->query->getInt('offset', 0));
+        $offers = $this->offersRepository->getUserOffers($offset);
 
         return $this->render('/car_seles_offers/userOffers.html.twig',[
-            'offers' => $offers
+            'offers' => $offers,
+            'previous' => $offset - SalesOffersRepository::PAGINATOR_PER_PAGE,
+            'next' => min(count($offers), $offset + SalesOffersRepository::PAGINATOR_PER_PAGE)
         ]);
     }
 

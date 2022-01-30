@@ -3,6 +3,7 @@
 {% block title %}Show Post{{ post.title }} {% endblock %}
 
 {% block body %}
+    {{ dump() }}
     <a href="{{ path('blog_brand') }}">| Select |</a>
     {% if brand|default %}
         <a href="{{ path('blog_model', { brand : brand}) }}">| {{ brand }} |</a>
@@ -59,6 +60,18 @@
                 </div>
             </div>
         {% endfor %}
+        <ul class="pagination">
+        {% if previous >= 0 %}
+            <li class="page-item">
+            <a class="page-link" href="{{ path('blog_selected_post', { brand : brand, model : model, generation : generation, body : body, engine : engine, post : post.id, offset: previous }) }}">Previous</a>
+            </li>
+        {% endif %}
+        {% if next < comments|length %}
+            <li class="page-item">
+            <a class="page-link" href="{{ path('blog_selected_post', { brand : brand, model : model, generation : generation, body : body, engine : engine, post : post.id, offset: next }) }}">Next</a>
+            </li>
+        {% endif %}
+        </ul>
     </div>
     <br>
     <div class="center">

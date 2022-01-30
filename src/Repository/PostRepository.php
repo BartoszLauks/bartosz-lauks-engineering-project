@@ -9,6 +9,7 @@ use App\Entity\Generation;
 use App\Entity\Model;
 use App\Entity\Post;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
 use PhpParser\Node\Scalar\String_;
 use Symfony\Component\Security\Core\Security;
@@ -21,6 +22,8 @@ use Symfony\Component\Security\Core\Security;
  */
 class PostRepository extends ServiceEntityRepository
 {
+    public const PAGINATOR_PER_PAGE = 4;
+
     private Security $security;
 
     public function __construct(ManagerRegistry $registry,Security $security)
@@ -29,64 +32,74 @@ class PostRepository extends ServiceEntityRepository
         $this->security = $security;
     }
 
-    public function searchPosts(string $str)
+    public function searchPosts(string $str,int $offset) : Paginator
     {
-        return $this->createQueryBuilder('p')
+        $query = $this->createQueryBuilder('p')
             ->orderBy('p.createdAt','DESC')
             ->where('LOWER(p.title) LIKE :str')
             ->orWhere('LOWER(p.content) LIKE :str')
             ->setParameter('str','%'.strtolower($str).'%')
-            ->getQuery()
-            ->getResult()
-            ;
+            ->setMaxResults(self::PAGINATOR_PER_PAGE)
+            ->setFirstResult($offset)
+            ->getQuery();
+
+        return new Paginator($query);
     }
 
 
-    public function getPostsUser()
+    public function getPostsUser(int $offset) : Paginator
     {
-        return $this->createQueryBuilder('p')
+        $query = $this->createQueryBuilder('p')
             ->orderBy('p.createdAt','DESC')
             ->where('p.user = :user')
             ->setParameter('user',$this->security->getUser())
-            ->getQuery()
-            ->getResult()
-            ;
+            ->setMaxResults(self::PAGINATOR_PER_PAGE)
+            ->setFirstResult($offset)
+            ->getQuery();
+
+        return new Paginator($query);
     }
 
-    public function getPosts()
+    public function getPosts(int $offset) : Paginator
     {
-        return $this->createQueryBuilder('p')
+        $query = $this->createQueryBuilder('p')
             ->orderBy('p.createdAt','DESC')
-            ->getQuery()
-            ->getResult()
-            ;
+            ->setMaxResults(self::PAGINATOR_PER_PAGE)
+            ->setFirstResult($offset)
+            ->getQuery();
+
+        return new Paginator($query);
     }
 
-    public function getPostsByBrand(Brand $brand)
+    public function getPostsByBrand(Brand $brand, int $offset) : Paginator
     {
-        return $this->createQueryBuilder('p')
+        $query = $this->createQueryBuilder('p')
             ->orderBy('p.createdAt','DESC')
             ->where('p.brand = :brand')
             ->setParameter('brand',$brand)
-            ->getQuery()
-            ->getResult()
-            ;
+            ->setMaxResults(self::PAGINATOR_PER_PAGE)
+            ->setFirstResult($offset)
+            ->getQuery();
+
+        return new Paginator($query);
     }
-    public function getPostsByModel(Brand $brand, Model $model)
+    public function getPostsByModel(Brand $brand, Model $model, int $offset) : Paginator
     {
-        return $this->createQueryBuilder('p')
+        $query = $this->createQueryBuilder('p')
             ->orderBy('p.createdAt','DESC')
             ->where('p.brand = :brand')
             ->andWhere('p.model = :model')
             ->setParameter('brand',$brand)
             ->setParameter('model',$model)
-            ->getQuery()
-            ->getResult()
-            ;
+            ->setMaxResults(self::PAGINATOR_PER_PAGE)
+            ->setFirstResult($offset)
+            ->getQuery();
+
+        return new Paginator($query);
     }
-    public function getPostsByGeneration(Brand $brand, Model $model, Generation $generation)
+    public function getPostsByGeneration(Brand $brand, Model $model, Generation $generation, int $offset) : Paginator
     {
-        return $this->createQueryBuilder('p')
+        $query = $this->createQueryBuilder('p')
             ->orderBy('p.createdAt','DESC')
             ->where('p.brand = :brand')
             ->andWhere('p.model = :model')
@@ -94,13 +107,15 @@ class PostRepository extends ServiceEntityRepository
             ->setParameter('brand',$brand)
             ->setParameter('model',$model)
             ->setParameter('generation',$generation)
-            ->getQuery()
-            ->getResult()
-            ;
+            ->setMaxResults(self::PAGINATOR_PER_PAGE)
+            ->setFirstResult($offset)
+            ->getQuery();
+
+        return new Paginator($query);
     }
-    public function getPostsByCarBody(Brand $brand, Model $model, Generation $generation, CarBody $body)
+    public function getPostsByCarBody(Brand $brand, Model $model, Generation $generation, CarBody $body, int $offset) : Paginator
     {
-        return $this->createQueryBuilder('p')
+        $query = $this->createQueryBuilder('p')
             ->orderBy('p.createdAt','DESC')
             ->where('p.brand = :brand')
             ->andWhere('p.model = :model')
@@ -110,13 +125,15 @@ class PostRepository extends ServiceEntityRepository
             ->setParameter('model',$model)
             ->setParameter('generation',$generation)
             ->setParameter('body',$body)
-            ->getQuery()
-            ->getResult()
-            ;
+            ->setMaxResults(self::PAGINATOR_PER_PAGE)
+            ->setFirstResult($offset)
+            ->getQuery();
+
+        return new Paginator($query);
     }
-    public function getPostsByEngine(Brand $brand, Model $model, Generation $generation, CarBody $body, Engine $engine)
+    public function getPostsByEngine(Brand $brand, Model $model, Generation $generation, CarBody $body, Engine $engine, int $offset) : Paginator
     {
-        return $this->createQueryBuilder('p')
+        $query = $this->createQueryBuilder('p')
             ->orderBy('p.createdAt','DESC')
             ->where('p.brand = :brand')
             ->andWhere('p.model = :model')
@@ -128,8 +145,10 @@ class PostRepository extends ServiceEntityRepository
             ->setParameter('generation',$generation)
             ->setParameter('body',$body)
             ->setParameter('engine',$engine)
-            ->getQuery()
-            ->getResult()
-            ;
+            ->setMaxResults(self::PAGINATOR_PER_PAGE)
+            ->setFirstResult($offset)
+            ->getQuery();
+
+        return new Paginator($query);
     }
 }

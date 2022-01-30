@@ -82,15 +82,18 @@ class BlogController extends AbstractController
 
         $form->handleRequest($request);
 
-        $posts = $this->postRepository->getPosts();
+        $offset = max(0, $request->query->getInt('offset', 0));
+        $posts = $this->postRepository->getPosts($offset);
         if ($form->isSubmitted())
         {
             $brand = $form->getData()['brand'];
-            return $this->redirect($request->getUri().$brand->getName());
+            return $this->redirect($this->generateUrl('blog_model',['brand' => $brand]));
         }
         return $this->render('/blog/index.html.twig',[
             'form' => $form->createView(),
-            'posts' => $posts
+            'posts' => $posts,
+            'previous' => $offset - PostRepository::PAGINATOR_PER_PAGE,
+            'next' => min(count($posts), $offset + PostRepository::PAGINATOR_PER_PAGE)
         ]);
     }
 
@@ -102,7 +105,8 @@ class BlogController extends AbstractController
         if (empty($model)) {
             throw new NotFoundHttpException();
         }
-        $posts = $this->postRepository->getPostsByBrand($brand);
+        $offset = max(0, $request->query->getInt('offset', 0));
+        $posts = $this->postRepository->getPostsByBrand($brand,$offset);
 
         $form = $this->formFactory->create(ChoicesModelType::class,[],[
             'model' => $model
@@ -112,13 +116,14 @@ class BlogController extends AbstractController
         if ($form->isSubmitted())
         {
             $model = $form->getData()['model'];
-
-            return $this->redirect($request->getUri().$model);
+            return $this->redirect($this->generateUrl('blog_generation',['brand' => $brand->getName(), 'model' => $model]));
         }
         return $this->render('/blog/index.html.twig',[
             'brand' => $brand->getName(),
             'form' => $form->createView(),
-            'posts' => $posts
+            'posts' => $posts,
+            'previous' => $offset - PostRepository::PAGINATOR_PER_PAGE,
+            'next' => min(count($posts), $offset + PostRepository::PAGINATOR_PER_PAGE)
         ]);
     }
 
@@ -131,7 +136,8 @@ class BlogController extends AbstractController
         if (empty($generation)) {
             throw new NotFoundHttpException();
         }
-        $posts = $this->postRepository->getPostsByModel($brand,$model);
+        $offset = max(0, $request->query->getInt('offset', 0));
+        $posts = $this->postRepository->getPostsByModel($brand,$model,$offset);
 
         $form = $this->formFactory->create(ChoicesGenerationType::class,[],[
             'generation' => $generation
@@ -141,13 +147,16 @@ class BlogController extends AbstractController
         if ($form->isSubmitted())
         {
             $generation = $form->getData()['generation'];
-            return $this->redirect($request->getUri().$generation);
+            return $this->redirect($this->generateUrl('blog_body',['brand' => $brand->getName(),
+                'model' => $model->getName(), 'generation' => $generation]));
         }
         return $this->render('/blog/index.html.twig',[
             'brand' => $brand->getName(),
             'model' => $model->getName(),
             'form' => $form->createView(),
-            'posts' => $posts
+            'posts' => $posts,
+            'previous' => $offset - PostRepository::PAGINATOR_PER_PAGE,
+            'next' => min(count($posts), $offset + PostRepository::PAGINATOR_PER_PAGE)
         ]);
     }
 
@@ -161,7 +170,8 @@ class BlogController extends AbstractController
         if (empty($body)) {
             throw new NotFoundHttpException();
         }
-        $posts = $this->postRepository->getPostsByGeneration($brand,$model,$generation);
+        $offset = max(0, $request->query->getInt('offset', 0));
+        $posts = $this->postRepository->getPostsByGeneration($brand,$model,$generation,$offset);
 
         $form = $this->formFactory->create(ChoicesBodyType::class,[],[
             'body' => $body,
@@ -171,14 +181,17 @@ class BlogController extends AbstractController
         if ($form->isSubmitted())
         {
             $body = $form->getData()['body'];
-            return $this->redirect($request->getUri().$body);
+            return $this->redirect($this->generateUrl('blog_engine',['brand' => $brand->getName(),
+                'model' => $model->getName(), 'generation' => $generation->getName(), 'body' => $body]));
         }
         return $this->render('/blog/index.html.twig',[
             'brand' => $brand->getName(),
             'model' => $model->getName(),
             'generation' => $generation->getName(),
             'form' => $form->createView(),
-            'posts' => $posts
+            'posts' => $posts,
+            'previous' => $offset - PostRepository::PAGINATOR_PER_PAGE,
+            'next' => min(count($posts), $offset + PostRepository::PAGINATOR_PER_PAGE)
         ]);
     }
 
@@ -193,7 +206,8 @@ class BlogController extends AbstractController
         if (empty($engine)) {
             throw new NotFoundHttpException();
         }
-        $posts = $this->postRepository->getPostsByCarBody($brand,$model,$generation,$body);
+        $offset = max(0, $request->query->getInt('offset', 0));
+        $posts = $this->postRepository->getPostsByCarBody($brand,$model,$generation,$body,$offset);
 
         $form = $this->formFactory->create(ChoicesEngineType::class,[],[
             'engine' => $engine
@@ -203,7 +217,9 @@ class BlogController extends AbstractController
         if ($form->isSubmitted())
         {
             $engine = $form->getData()['engine'];
-            return $this->redirect($request->getUri().$engine);
+            return $this->redirect($this->generateUrl('blog_all',['brand' => $brand->getName(),
+                'model' => $model->getName(), 'generation' => $generation->getName(), 'body' => $body->getName(),
+                'engine' => $engine]));
         }
         return $this->render('/blog/index.html.twig',[
             'brand' => $brand->getName(),
@@ -211,7 +227,9 @@ class BlogController extends AbstractController
             'generation' => $generation->getName(),
             'body' => $body->getName(),
             'form' => $form->createView(),
-            'posts' => $posts
+            'posts' => $posts,
+            'previous' => $offset - PostRepository::PAGINATOR_PER_PAGE,
+            'next' => min(count($posts), $offset + PostRepository::PAGINATOR_PER_PAGE)
         ]);
     }
 
@@ -221,14 +239,15 @@ class BlogController extends AbstractController
     #[ParamConverter('generation', options: ['mapping' => ['generation' => 'name']])]
     #[ParamConverter('body', options: ['mapping' => ['body' => 'name']])]
     #[ParamConverter('engine', options: ['mapping' => ['engine' => 'name']])]
-    public function allComponents(Brand $brand,Model $model,Generation $generation,CarBody $body, Engine $engine): Response
+    public function allComponents(Request $request ,Brand $brand,Model $model,Generation $generation,CarBody $body, Engine $engine): Response
     {
         $components = $this->engineRepository->checkCarExist($brand,$model,$generation,$body,$engine);
         if (empty($components))
         {
             throw new NotFoundHttpException();
         }
-        $posts = $this->postRepository->getPostsByEngine($brand,$model,$generation,$body,$engine);
+        $offset = max(0, $request->query->getInt('offset', 0));
+        $posts = $this->postRepository->getPostsByEngine($brand,$model,$generation,$body,$engine,$offset);
 
         return $this->render('/blog/index.html.twig',[
             'brand' => $brand->getName(),
@@ -237,7 +256,9 @@ class BlogController extends AbstractController
             'body' => $body->getName(),
             'engine' => $engine->getName(),
             'posts' => $posts,
-            'new' => true
+            'new' => true,
+            'previous' => $offset - PostRepository::PAGINATOR_PER_PAGE,
+            'next' => min(count($posts), $offset + PostRepository::PAGINATOR_PER_PAGE)
             ]);
     }
 
@@ -248,14 +269,15 @@ class BlogController extends AbstractController
     #[ParamConverter('body', options: ['mapping' => ['body' => 'name']])]
     #[ParamConverter('engine', options: ['mapping' => ['engine' => 'name']])]
     #[ParamConverter('post')]
-    public function showBlogPost(Brand $brand,Model $model,Generation $generation,CarBody $body, Engine $engine,Post $post): Response
+    public function showBlogPost(Request $request,Brand $brand,Model $model,Generation $generation,CarBody $body, Engine $engine,Post $post): Response
     {
         $components = $this->engineRepository->checkCarExist($brand,$model,$generation,$body,$engine);
         if (empty($components))
         {
             throw new NotFoundHttpException();
         }
-        $comments = $this->commentRepository->getCommentsPost($post);
+        $offset = max(0, $request->query->getInt('offset', 0));
+        $comments = $this->commentRepository->getCommentsPost($post,$offset);
 
         return $this->render('/blog/show.html.twig',[
             'brand' => $brand->getName(),
@@ -264,7 +286,9 @@ class BlogController extends AbstractController
             'body' => $body->getName(),
             'engine' => $engine->getName(),
             'post' => $post,
-            'comments' => $comments
+            'comments' => $comments,
+            'previous' => $offset - CommentRepository::PAGINATOR_PER_PAGE,
+            'next' => min(count($comments), $offset + CommentRepository::PAGINATOR_PER_PAGE)
         ]);
     }
 
@@ -395,12 +419,15 @@ class BlogController extends AbstractController
     }
 
     #[Route('-posts-user/', name: 'blog_user_post')]
-    public function userPosts(): Response
+    public function userPosts(Request $request): Response
     {
-        $posts = $this->postRepository->getPostsUser();
+        $offset = max(0, $request->query->getInt('offset', 0));
+        $posts = $this->postRepository->getPostsUser($offset);
 
         return $this->render('/blog/userPosts.html.twig',[
-            'posts' => $posts
+            'posts' => $posts,
+            'previous' => $offset - PostRepository::PAGINATOR_PER_PAGE,
+            'next' => min(count($posts), $offset + PostRepository::PAGINATOR_PER_PAGE)
         ]);
     }
 

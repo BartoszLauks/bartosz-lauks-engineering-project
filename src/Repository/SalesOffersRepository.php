@@ -9,6 +9,7 @@ use App\Entity\Generation;
 use App\Entity\Model;
 use App\Entity\SalesOffers;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Security\Core\Security;
 
@@ -20,6 +21,8 @@ use Symfony\Component\Security\Core\Security;
  */
 class SalesOffersRepository extends ServiceEntityRepository
 {
+    public const PAGINATOR_PER_PAGE = 4;
+
     private $security;
 
     public function __construct(ManagerRegistry $registry,Security $security)
@@ -28,51 +31,59 @@ class SalesOffersRepository extends ServiceEntityRepository
         $this->security = $security;
     }
 
-    public function getUserOffers()
+    public function getUserOffers(int $offset) : Paginator
     {
-        return $this->createQueryBuilder('o')
+        $query = $this->createQueryBuilder('o')
             ->orderBy('o.createdAt','DESC')
             ->where('o.user = :user')
             ->setParameter('user',$this->security->getUser())
-            ->getQuery()
-            ->getResult()
-            ;
+            ->setMaxResults(self::PAGINATOR_PER_PAGE)
+            ->setFirstResult($offset)
+            ->getQuery();
+
+        return new Paginator($query);
     }
 
-    public function getOffers()
+    public function getOffers(int $offset) : Paginator
     {
-        return $this->createQueryBuilder('o')
+        $query = $this->createQueryBuilder('o')
             ->orderBy('o.createdAt','DESC')
-            ->getQuery()
-            ->getResult()
-            ;
+            ->setMaxResults(self::PAGINATOR_PER_PAGE)
+            ->setFirstResult($offset)
+            ->getQuery();
+
+        return new Paginator($query);
     }
 
-    public function getOffersByBrand(Brand $brand)
+    public function getOffersByBrand(Brand $brand, int $offset) : Paginator
     {
-        return $this->createQueryBuilder('o')
+        $query = $this->createQueryBuilder('o')
             ->orderBy('o.createdAt','DESC')
             ->where('o.brand = :brand')
             ->setParameter('brand',$brand)
-            ->getQuery()
-            ->getResult()
-            ;
+            ->setMaxResults(self::PAGINATOR_PER_PAGE)
+            ->setFirstResult($offset)
+            ->getQuery();
+
+        return new Paginator($query);
     }
-    public function getOffersByModel(Brand $brand, Model $model)
+    public function getOffersByModel(Brand $brand, Model $model, int $offset) : Paginator
     {
-        return $this->createQueryBuilder('o')
+        $query = $this->createQueryBuilder('o')
             ->orderBy('o.createdAt','DESC')
             ->where('o.brand = :brand')
             ->andWhere('o.model = :model')
             ->setParameter('brand',$brand)
             ->setParameter('model',$model)
-            ->getQuery()
-            ->getResult()
-            ;
+            ->setMaxResults(self::PAGINATOR_PER_PAGE)
+            ->setFirstResult($offset)
+            ->getQuery();
+
+        return new Paginator($query);
     }
-    public function getOffersByGeneration(Brand $brand, Model $model, Generation $generation)
+    public function getOffersByGeneration(Brand $brand, Model $model, Generation $generation, int $offset) : Paginator
     {
-        return $this->createQueryBuilder('o')
+        $query = $this->createQueryBuilder('o')
             ->orderBy('o.createdAt','DESC')
             ->where('o.brand = :brand')
             ->andWhere('o.model = :model')
@@ -80,13 +91,15 @@ class SalesOffersRepository extends ServiceEntityRepository
             ->setParameter('brand',$brand)
             ->setParameter('model',$model)
             ->setParameter('generation',$generation)
-            ->getQuery()
-            ->getResult()
-            ;
+            ->setMaxResults(self::PAGINATOR_PER_PAGE)
+            ->setFirstResult($offset)
+            ->getQuery();
+
+        return new Paginator($query);
     }
-    public function getOffersByCarBody(Brand $brand, Model $model, Generation $generation, CarBody $body)
+    public function getOffersByCarBody(Brand $brand, Model $model, Generation $generation, CarBody $body, int $offset) : Paginator
     {
-        return $this->createQueryBuilder('o')
+        $query = $this->createQueryBuilder('o')
             ->orderBy('o.createdAt','DESC')
             ->where('o.brand = :brand')
             ->andWhere('o.model = :model')
@@ -96,13 +109,15 @@ class SalesOffersRepository extends ServiceEntityRepository
             ->setParameter('model',$model)
             ->setParameter('generation',$generation)
             ->setParameter('body',$body)
-            ->getQuery()
-            ->getResult()
-            ;
+            ->setMaxResults(self::PAGINATOR_PER_PAGE)
+            ->setFirstResult($offset)
+            ->getQuery();
+
+        return new Paginator($query);
     }
-    public function getOffersByEngine(Brand $brand, Model $model, Generation $generation, CarBody $body, Engine $engine)
+    public function getOffersByEngine(Brand $brand, Model $model, Generation $generation, CarBody $body, Engine $engine, int $offset) : Paginator
     {
-        return $this->createQueryBuilder('o')
+        $query = $this->createQueryBuilder('o')
             ->orderBy('o.createdAt','DESC')
             ->where('o.brand = :brand')
             ->andWhere('o.model = :model')
@@ -114,8 +129,10 @@ class SalesOffersRepository extends ServiceEntityRepository
             ->setParameter('generation',$generation)
             ->setParameter('body',$body)
             ->setParameter('engine',$engine)
-            ->getQuery()
-            ->getResult()
-            ;
+            ->setMaxResults(self::PAGINATOR_PER_PAGE)
+            ->setFirstResult($offset)
+            ->getQuery();
+
+        return new Paginator($query);
     }
 }

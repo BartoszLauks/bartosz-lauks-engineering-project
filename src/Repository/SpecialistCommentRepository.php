@@ -9,6 +9,7 @@ use App\Entity\Generation;
 use App\Entity\Model;
 use App\Entity\SpecialistComment;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -19,44 +20,55 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class SpecialistCommentRepository extends ServiceEntityRepository
 {
+    public const PAGINATOR_PER_PAGE = 4;
+
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, SpecialistComment::class);
     }
 
-    public function getSpecialistComment()
+    public function getSpecialistComment(int $offset) : Paginator
     {
-        return $this->createQueryBuilder('s')
+        $query = $this->createQueryBuilder('s')
             ->orderBy('s.createdAt', 'DESC')
-            ->getQuery()
-            ->getResult();
+            ->setMaxResults(self::PAGINATOR_PER_PAGE)
+            ->setFirstResult($offset)
+            ->getQuery();
+
+        return new Paginator($query);
     }
 
-    public function getSpecialistCommentByBrand(Brand $brand)
+    public function getSpecialistCommentByBrand(Brand $brand, int $offset) : Paginator
     {
-        return $this->createQueryBuilder('s')
+        $query = $this->createQueryBuilder('s')
             ->orderBy('s.createdAt', 'DESC')
             ->where('s.brand = :brand')
             ->setParameter('brand',$brand)
-            ->getQuery()
-            ->getResult();
+            ->setMaxResults(self::PAGINATOR_PER_PAGE)
+            ->setFirstResult($offset)
+            ->getQuery();
+
+        return new Paginator($query);
     }
 
-    public function getSpecialistCommentByModel(Brand $brand, Model $model)
+    public function getSpecialistCommentByModel(Brand $brand, Model $model, int $offset) : Paginator
     {
-        return $this->createQueryBuilder('s')
+        $query = $this->createQueryBuilder('s')
             ->orderBy('s.createdAt', 'DESC')
             ->where('s.brand = :brand')
             ->andWhere('s.model = :model')
             ->setParameter('brand',$brand)
             ->setParameter('model',$model)
-            ->getQuery()
-            ->getResult();
+            ->setMaxResults(self::PAGINATOR_PER_PAGE)
+            ->setFirstResult($offset)
+            ->getQuery();
+
+        return new Paginator($query);
     }
 
-    public function getSpecialistCommentByGeneration(Brand $brand, Model $model, Generation $generation)
+    public function getSpecialistCommentByGeneration(Brand $brand, Model $model, Generation $generation, int $offset) : Paginator
     {
-        return $this->createQueryBuilder('s')
+        $query = $this->createQueryBuilder('s')
             ->orderBy('s.createdAt', 'DESC')
             ->where('s.brand = :brand')
             ->andWhere('s.model = :model')
@@ -64,13 +76,16 @@ class SpecialistCommentRepository extends ServiceEntityRepository
             ->setParameter('brand',$brand)
             ->setParameter('model',$model)
             ->setParameter('generation',$generation)
-            ->getQuery()
-            ->getResult();
+            ->setMaxResults(self::PAGINATOR_PER_PAGE)
+            ->setFirstResult($offset)
+            ->getQuery();
+
+        return new Paginator($query);
     }
 
-    public function getSpecialistCommentByCarBody(Brand $brand, Model $model, Generation $generation, CarBody $body)
+    public function getSpecialistCommentByCarBody(Brand $brand, Model $model, Generation $generation, CarBody $body, int $offset) : Paginator
     {
-        return $this->createQueryBuilder('s')
+        $query = $this->createQueryBuilder('s')
             ->orderBy('s.createdAt', 'DESC')
             ->where('s.brand = :brand')
             ->andWhere('s.model = :model')
@@ -80,13 +95,16 @@ class SpecialistCommentRepository extends ServiceEntityRepository
             ->setParameter('model',$model)
             ->setParameter('generation',$generation)
             ->setParameter('body',$body)
-            ->getQuery()
-            ->getResult();
+            ->setMaxResults(self::PAGINATOR_PER_PAGE)
+            ->setFirstResult($offset)
+            ->getQuery();
+
+        return new Paginator($query);
     }
 
-    public function getSpecialistCommentByEngine(Brand $brand, Model $model, Generation $generation, CarBody $body, Engine $engine)
+    public function getSpecialistCommentByEngine(Brand $brand, Model $model, Generation $generation, CarBody $body, Engine $engine, int $offset) : Paginator
     {
-        return $this->createQueryBuilder('s')
+        $query = $this->createQueryBuilder('s')
             ->orderBy('s.createdAt', 'DESC')
             ->where('s.brand = :brand')
             ->andWhere('s.model = :model')
@@ -98,7 +116,10 @@ class SpecialistCommentRepository extends ServiceEntityRepository
             ->setParameter('generation',$generation)
             ->setParameter('body',$body)
             ->setParameter('engine', $engine)
-            ->getQuery()
-            ->getResult();
+            ->setMaxResults(self::PAGINATOR_PER_PAGE)
+            ->setFirstResult($offset)
+            ->getQuery();
+
+        return new Paginator($query);
     }
 }
