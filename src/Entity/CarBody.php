@@ -12,7 +12,6 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * @ORM\Entity(repositoryClass=CarBodyRepository::class)
  * @ORM\HasLifecycleCallbacks()
- * @UniqueEntity(fields={"name","generation"})
  */
 class CarBody
 {

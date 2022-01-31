@@ -67,7 +67,6 @@ class Generation
      * @ORM\Column(type="integer")
      * @Assert\NotBlank()
      * @Assert\PositiveOrZero()
-     * @Assert\GreaterThanOrEqual(propertyPath="producedUntil")
      * @Groups({"new_car"})
      */
     private $producedFrom;

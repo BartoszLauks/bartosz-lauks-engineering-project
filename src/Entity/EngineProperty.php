@@ -12,7 +12,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * @ORM\Entity(repositoryClass=EnginePropertyRepository::class)
  * @ORM\HasLifecycleCallbacks()
- * @UniqueEntity("name")
+ * @UniqueEntity("property")
  */
 class EngineProperty
 {

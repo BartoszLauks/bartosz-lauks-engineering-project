@@ -27,6 +27,7 @@ class CarBodyCrudController extends AbstractCrudController
             DateTimeField::new("createdAt")->hideOnForm(),
             AssociationField::new('generation'),
             AssociationField::new('engines')->hideOnForm(),
+            AssociationField::new('value')->hideOnForm()
 
         ];
     }

@@ -24,4 +24,10 @@ class HomeController extends AbstractController
             'newses' => $this->newsesRepository->getNewses()
         ]);
     }
+
+    #[Route('/dedication', name: 'app_dedication')]
+    public function dedication()
+    {
+        return $this->render('home/dedication.html.twig');
+    }
 }
