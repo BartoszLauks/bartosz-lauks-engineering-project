@@ -3,7 +3,6 @@
 {% block title %}Car seles offers{% endblock %}
 
 {% block body %}
-    {{ dump() }}
         <a href="{{ path('car_seles_offers_brand') }}">| Select |</a>
         {% if brand|default %}
             <a href="{{ path('car_seles_offers_model', { brand : brand}) }}">| {{ brand }} |</a>

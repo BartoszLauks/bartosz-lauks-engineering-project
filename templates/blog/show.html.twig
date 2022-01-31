@@ -3,7 +3,6 @@
 {% block title %}Show Post{{ post.title }} {% endblock %}
 
 {% block body %}
-    {{ dump() }}
     <a href="{{ path('blog_brand') }}">| Select |</a>
     {% if brand|default %}
         <a href="{{ path('blog_model', { brand : brand}) }}">| {{ brand }} |</a>
