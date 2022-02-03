@@ -44,6 +44,10 @@
         <div class="center-bar-warning">
             <h4>For select components, don't have offers</h4>
         </div>
+    {% else %}
+        <div class="center-bar-post">
+            <h4>Sales offers</h4>
+        </div>
     {% endif %}
     {% if offers|default %}
         {% for offer in offers %}

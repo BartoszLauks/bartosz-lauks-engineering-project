@@ -30,7 +30,6 @@
     {% if form|default %}
         {{ form(form) }}
     {% endif %}
-
     {% if brand|default %}
         {% if comments is empty %}
             <div class="center-bar-warning">
@@ -38,11 +37,9 @@
             </div>
         {% endif %}
     {% endif %}
-    {% if brand|default %}
         <div class="center-bar-post">
             <h4>Specialist comments</h4>
         </div>
-    {% endif %}
     {% if comments|default %}
         {% for comment in comments %}
             <div class="card">

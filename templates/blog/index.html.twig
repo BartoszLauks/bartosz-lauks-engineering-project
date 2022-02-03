@@ -58,6 +58,11 @@
                         <p class="card-text">{{ post.content }}</p>
                         <p class="card-text"><small class="text-muted">Comment added at : {{ post.createdAt|date("F jS \\a\\t g:ia") }}</small></p>
                         <p class="card-text"><small class="text-muted">By : {{ post.user.name }} {{ post.user.surname }}</small></p>
+                        {% if app.user == post.user %}
+                            <a href="{{ path('blog_user_post_remove',{post: post.id}) }}">
+                                <button class="btn btn-danger">Remove</button>
+                            </a>
+                        {% endif %}
                     </div>
                 </div>
             </a>
