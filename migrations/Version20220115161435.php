@@ -20,22 +20,23 @@ final class Version20220115161435 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->addSql('ALTER TABLE brand CHANGE created_at created_at DATETIME DEFAULT NULL');
-        $this->addSql('ALTER TABLE car_body CHANGE created_at created_at DATETIME DEFAULT NULL');
-        $this->addSql('ALTER TABLE engine CHANGE created_at created_at DATETIME DEFAULT NULL');
-        $this->addSql('ALTER TABLE gender CHANGE created_at created_at DATETIME DEFAULT NULL');
-        $this->addSql('ALTER TABLE generation CHANGE created_at created_at DATETIME DEFAULT NULL');
-        $this->addSql('ALTER TABLE model CHANGE created_at created_at DATETIME DEFAULT NULL');
+        $this->addSql('ALTER TABLE brand ADD created_at DATETIME NOT NULL');
+        $this->addSql('ALTER TABLE car_body ADD created_at DATETIME NOT NULL');
+        $this->addSql('ALTER TABLE engine ADD created_at DATETIME NOT NULL');
+        $this->addSql('ALTER TABLE gender ADD created_at DATETIME NOT NULL');
+        $this->addSql('ALTER TABLE generation ADD created_at DATETIME NOT NULL');
+        $this->addSql('ALTER TABLE model ADD created_at DATETIME NOT NULL');
     }
 
     public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
-        $this->addSql('ALTER TABLE brand CHANGE created_at created_at DATE DEFAULT NULL');
-        $this->addSql('ALTER TABLE car_body CHANGE created_at created_at DATE DEFAULT NULL');
-        $this->addSql('ALTER TABLE engine CHANGE created_at created_at DATE DEFAULT NULL');
-        $this->addSql('ALTER TABLE gender CHANGE created_at created_at DATE DEFAULT NULL');
-        $this->addSql('ALTER TABLE generation CHANGE created_at created_at DATE DEFAULT NULL');
-        $this->addSql('ALTER TABLE model CHANGE created_at created_at DATE DEFAULT NULL');
+        $this->addSql('ALTER TABLE brand DROP created_at');
+        $this->addSql('ALTER TABLE car_body DROP created_at');
+        $this->addSql('ALTER TABLE engine DROP created_at');
+        $this->addSql('ALTER TABLE gender DROP created_at');
+        $this->addSql('ALTER TABLE generation DROP created_at');
+        $this->addSql('ALTER TABLE model DROP created_at');
     }
 }
+
