@@ -109,6 +109,12 @@ class RegistrationController extends AbstractController
 
             $user = $this->userRepository->findOneBy(['email' => $form->getData()['email']]);
 
+            if (null === $user) {
+                $this->addFlash('danger', 'The e-mail address provided is not associated with any account.');
+
+                return $this->redirectToRoute('app_verify_email_refresh');
+            }
+
             if ($user->isVerified()) {
                 $this->addFlash('info', 'Your account is verified.');
 
