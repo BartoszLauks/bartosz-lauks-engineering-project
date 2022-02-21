@@ -24,7 +24,7 @@ $ make install
 ```
 
 
-**Wdrażanie backup z danymi destowymi bez zdjęć**
+**Wdrażanie backup z danymi testowymi bez zdjęć**
 
 ```
 $ cat backup.sql | docker exec -it bartosz-lauks-engineering-project-mysql-dev
